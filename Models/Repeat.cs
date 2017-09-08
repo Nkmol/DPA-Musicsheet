@@ -5,12 +5,9 @@ using System.Text;
 
 namespace Models
 {
-    public class Stave
+    public class Repeat
     {
-        /// <summary>
-        /// time signature
-        /// </summary>
-        public Double Time
+        public int repeatCount
         {
             get => default(int);
             set
@@ -18,9 +15,17 @@ namespace Models
             }
         }
 
-        public Note[] Notes
+        public Models.Note[] Notes
         {
-            get => default(Note[]);
+            get => default(Models.Note[]);
+            set
+            {
+            }
+        }
+
+        public Models.Volta[] Voltas
+        {
+            get => default(Models.Volta[]);
             set
             {
             }

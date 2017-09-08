@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Models
+{
+    public class Volta
+    {
+        public Models.Note[] Notes
+        {
+            get => default(Models.Note[]);
+            set
+            {
+            }
+        }
+    }
+}

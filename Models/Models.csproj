@@ -7,8 +7,8 @@
     <ProjectGuid>{982BB5B0-AA50-4184-BAED-3D00088A3306}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClassLibrary1</RootNamespace>
-    <AssemblyName>ClassLibrary1</AssemblyName>
+    <RootNamespace>Models</RootNamespace>
+    <AssemblyName>Models</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -44,8 +44,10 @@
     <Compile Include="Note.cs" />
     <Compile Include="Pause.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repeat.cs" />
     <Compile Include="Stave.cs" />
     <Compile Include="TrunkNote.cs" />
+    <Compile Include="Volta.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DomainClassDiagram.cd" />
