@@ -103,6 +103,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="New\FileHandlerNew.cs" />
     <Compile Include="Managers\MidiSequenceEventArgs.cs" />
     <Compile Include="Managers\WPFStaffsEventArgs.cs" />
     <Compile Include="Managers\LilypondEventArgs.cs" />
@@ -110,6 +111,8 @@
     <Compile Include="Managers\FileHandler.cs" />
     <Compile Include="Models\LilypondToken.cs" />
     <Compile Include="Models\LilypondTokenKind.cs" />
+    <Compile Include="New\FileReaderStrategyFactory.cs" />
+    <Compile Include="New\MidiReadStrategy.cs" />
     <Compile Include="ViewModels\MidiPlayerViewModel.cs" />
     <Compile Include="ViewModels\StaffsViewModel.cs" />
     <Compile Include="Views\MidiPlayerCtrl.xaml.cs">
@@ -205,6 +208,12 @@
     <None Include="Files\Twee-emmertjes-water-halen_ZonderHerhalingMaatwisseling.ly">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Helpers\Helpers.csproj">
+      <Project>{cd78540a-cf54-4362-8c32-7edd912ffd45}</Project>
+      <Name>Helpers</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -41,29 +41,8 @@ namespace DPA_Musicsheets.Managers
 
         public void OpenFile(string fileName)
         {
-            if (Path.GetExtension(fileName).EndsWith(".mid"))
-            {
-                MidiSequence = new Sequence();
-                MidiSequence.Load(fileName);
-                MidiSequenceChanged?.Invoke(this, new MidiSequenceEventArgs() { MidiSequence = MidiSequence });
-                LoadMidi(MidiSequence);
-            }
-            else if (Path.GetExtension(fileName).EndsWith(".ly"))
-            {
-                StringBuilder sb = new StringBuilder();
-                foreach (var line in File.ReadAllLines(fileName))
-                {
-                    sb.AppendLine(line);
-                }
-                
-                LilypondText = sb.ToString();
-
-                LoadLilypond(sb.ToString());
-            }
-            else
-            {
-                throw new NotSupportedException($"File extension {Path.GetExtension(fileName)} is not supported.");
-            }
+            var fileStringified = new FileHandlerNew().OpenFile(fileName);
+            LoadLilypond(fileStringified);
         }
 
         public void LoadLilypond(string content)
