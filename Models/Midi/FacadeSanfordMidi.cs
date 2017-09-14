@@ -3,37 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Helpers.FileReaders;
 using Sanford.Multimedia.Midi;
 
-
-namespace DPA_Musicsheets.New
+namespace Models.Midi
 {
-    // Todo: File has too much responsebility now
-    public class MidiReadStrategy : IFileReaderStrategy
+    public class FacadeSanfordMidi : IFacadeMidi
     {
-        private int _beatNote = 4;    // De waarde van een beatnote.
-        private int _bpm = 120;       // Aantal beatnotes per minute.
-        private int _beatsPerBar;     // Aantal beatnotes per maat.
+        // There are two types of division values: Pulses per quarter note and SMPTE
+        public int Division { get; set; }
+        public int BeatNote { get; set; }
+        public int BeatsPerBar { get; set; }
+        public int Bmp { get; set; }
+        public double PercentageOfBarReached { get; set; }
+        /// <summary>
+        /// All the in-order notes in a representation of duration + dot notation. For example: "8.", "16"
+        /// </summary>
+        public IList<string> Notes { get; set; }
 
-        public IEnumerable<string> ReadFile(string path)
+        public FacadeSanfordMidi()
         {
-            Sequence MidiSequence = new Sequence();
-            MidiSequence.Load(path);
-            return TransformSequence(MidiSequence);
+            Notes = new List<string>();
         }
 
-        // Todo: line return
-        private IEnumerable<string> TransformSequence(Sequence sequence)
+        public void LoadMidi(string path)
         {
-            StringBuilder lilypondContent = new StringBuilder();
-            lilypondContent.AppendLine("\\relative c' {");
-            lilypondContent.AppendLine("\\clef treble");
+            var sequence = new Sequence(path);
 
-            int division = sequence.Division;
+            //StringBuilder lilypondContent = new StringBuilder();
+            //lilypondContent.AppendLine("\\relative c' {");
+            //lilypondContent.AppendLine("\\clef treble");
+
+            Division = sequence.Division;
             int previousMidiKey = 60; // Central C;
             int previousNoteAbsoluteTicks = 0;
-            double percentageOfBarReached = 0;
+            PercentageOfBarReached = 0;
             bool startedNoteIsClosed = true;
 
             for (int i = 0; i < sequence.Count(); i++)
@@ -51,28 +54,30 @@ namespace DPA_Musicsheets.New
                             {
                                 case MetaType.TimeSignature:
                                     byte[] timeSignatureBytes = metaMessage.GetBytes();
-                                    _beatNote = timeSignatureBytes[0];
-                                    _beatsPerBar = (int)(1 / Math.Pow(timeSignatureBytes[1], -2));
-                                    lilypondContent.AppendLine($"\\time {_beatNote}/{_beatsPerBar}");
+                                    BeatNote = timeSignatureBytes[0];
+                                    BeatsPerBar = (int)(1 / Math.Pow(timeSignatureBytes[1], -2));
+                                    //lilypondContent.AppendLine($"\\time {_beatNote}/{_beatsPerBar}");
                                     break;
                                 case MetaType.Tempo:
                                     byte[] tempoBytes = metaMessage.GetBytes();
                                     int tempo = (tempoBytes[0] & 0xff) << 16 | (tempoBytes[1] & 0xff) << 8 | (tempoBytes[2] & 0xff);
-                                    _bpm = 60000000 / tempo;
-                                    lilypondContent.AppendLine($"\\tempo 4={_bpm}");
+                                    Bmp = 60000000 / tempo;
+                                    //lilypondContent.AppendLine($"\\tempo 4={_bpm}");
                                     break;
                                 case MetaType.EndOfTrack:
                                     if (previousNoteAbsoluteTicks > 0)
                                     {
                                         // Finish the last notelength.
-                                        double percentageOfBar;
-                                        lilypondContent.Append(GetNoteLength(previousNoteAbsoluteTicks, midiEvent.AbsoluteTicks, division, _beatNote, _beatsPerBar, out percentageOfBar));
-                                        lilypondContent.Append(" ");
+                                        //double percentageOfBar = 0;
+                                        var note = GetNoteLength(previousNoteAbsoluteTicks, midiEvent.AbsoluteTicks, Division, BeatNote, BeatsPerBar, out var percentageOfBar);
+                                        Notes.Add(note);
+                                        //lilypondContent.Append(GetNoteLength(previousNoteAbsoluteTicks, midiEvent.AbsoluteTicks, division, _beatNote, _beatsPerBar, out percentageOfBar));
+                                        //lilypondContent.Append(" ");
 
-                                        percentageOfBarReached += percentageOfBar;
-                                        if (percentageOfBarReached >= 1)
+                                        PercentageOfBarReached += percentageOfBar;
+                                        if (PercentageOfBarReached >= 1)
                                         {
-                                            lilypondContent.AppendLine("|");
+                                            //lilypondContent.AppendLine("|");
                                             percentageOfBar = percentageOfBar - 1;
                                         }
                                     }
@@ -87,7 +92,7 @@ namespace DPA_Musicsheets.New
                                 if (channelMessage.Data2 > 0) // Data2 = loudness
                                 {
                                     // Append the new note.
-                                    lilypondContent.Append(GetNoteName(previousMidiKey, channelMessage.Data1));
+                                    //lilypondContent.Append(GetNoteName(previousMidiKey, channelMessage.Data1));
 
                                     previousMidiKey = channelMessage.Data1;
                                     startedNoteIsClosed = false;
@@ -95,22 +100,24 @@ namespace DPA_Musicsheets.New
                                 else if (!startedNoteIsClosed)
                                 {
                                     // Finish the previous note with the length.
-                                    double percentageOfBar;
-                                    lilypondContent.Append(GetNoteLength(previousNoteAbsoluteTicks, midiEvent.AbsoluteTicks, division, _beatNote, _beatsPerBar, out percentageOfBar));
+                                    //double percentageOfBar;
+                                    var note = GetNoteLength(previousNoteAbsoluteTicks, midiEvent.AbsoluteTicks, Division, BeatNote, BeatsPerBar, out var percentageOfBar);
+                                    Notes.Add(note);
+                                    //lilypondContent.Append(GetNoteLength(previousNoteAbsoluteTicks, midiEvent.AbsoluteTicks, division, _beatNote, _beatsPerBar, out percentageOfBar));
                                     previousNoteAbsoluteTicks = midiEvent.AbsoluteTicks;
-                                    lilypondContent.Append(" ");
+                                    //lilypondContent.Append(" ");
 
-                                    percentageOfBarReached += percentageOfBar;
-                                    if (percentageOfBarReached >= 1)
+                                    PercentageOfBarReached += percentageOfBar;
+                                    if (PercentageOfBarReached >= 1)
                                     {
-                                        lilypondContent.AppendLine("|");
-                                        percentageOfBarReached -= 1;
+                                        //lilypondContent.AppendLine("|");
+                                        PercentageOfBarReached -= 1;
                                     }
                                     startedNoteIsClosed = true;
                                 }
                                 else
                                 {
-                                    lilypondContent.Append("r");
+                                    //lilypondContent.Append("r");
                                 }
                             }
                             break;
@@ -118,9 +125,7 @@ namespace DPA_Musicsheets.New
                 }
             }
 
-            lilypondContent.Append("}");
-
-            return new[] { lilypondContent.ToString() };
+            //lilypondContent.Append("}");
         }
 
         private string GetNoteLength(int absoluteTicks, int nextNoteAbsoluteTicks, int division, int beatNote, int beatsPerBar, out double percentageOfBar)
@@ -191,66 +196,6 @@ namespace DPA_Musicsheets.New
             }
 
             return duration + new String('.', dots);
-        }
-
-        private static string GetNoteName(int previousMidiKey, int midiKey)
-        {
-            int octave = (midiKey / 12) - 1;
-            string name = "";
-            switch (midiKey % 12)
-            {
-                case 0:
-                    name = "c";
-                    break;
-                case 1:
-                    name = "cis";
-                    break;
-                case 2:
-                    name = "d";
-                    break;
-                case 3:
-                    name = "dis";
-                    break;
-                case 4:
-                    name = "e";
-                    break;
-                case 5:
-                    name = "f";
-                    break;
-                case 6:
-                    name = "fis";
-                    break;
-                case 7:
-                    name = "g";
-                    break;
-                case 8:
-                    name = "gis";
-                    break;
-                case 9:
-                    name = "a";
-                    break;
-                case 10:
-                    name = "ais";
-                    break;
-                case 11:
-                    name = "b";
-                    break;
-            }
-
-            int distance = midiKey - previousMidiKey;
-            while (distance < -6)
-            {
-                name += ",";
-                distance += 8;
-            }
-
-            while (distance > 6)
-            {
-                name += "'";
-                distance -= 8;
-            }
-
-            return name;
         }
     }
 }
