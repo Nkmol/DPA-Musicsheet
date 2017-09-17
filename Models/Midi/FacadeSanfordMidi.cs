@@ -13,20 +13,22 @@ namespace Models.Midi
         {
         }
 
-        public EasyMidi LoadMidi(string path)
+        public IEnumerable<string> LoadMidi(string path)
         {
-            var midi = new EasyMidi();
             var sequence = new Sequence(path);
 
             //StringBuilder lilypondContent = new StringBuilder();
             //lilypondContent.AppendLine("\\relative c' {");
             //lilypondContent.AppendLine("\\clef treble");
 
-            midi.Division = sequence.Division;
+            var division = sequence.Division;
             int previousMidiKey = 60; // Central C;
             int previousNoteAbsoluteTicks = 0;
-            midi.PercentageOfBarReached = 0;
+            double percentageOfBarReached = 0;
             bool startedNoteIsClosed = true;
+            int bmp = 0;
+            int beatNote = 0;
+            int beatsPerBar = 0;
 
             for (int i = 0; i < sequence.Count(); i++)
             {
@@ -43,31 +45,36 @@ namespace Models.Midi
                             {
                                 case MetaType.TimeSignature:
                                     byte[] timeSignatureBytes = metaMessage.GetBytes();
-                                    midi.BeatNote = timeSignatureBytes[0];
-                                    midi.BeatsPerBar = (int)(1 / Math.Pow(timeSignatureBytes[1], -2));
+                                    beatNote = timeSignatureBytes[0];
+                                    beatsPerBar = (int)(1 / Math.Pow(timeSignatureBytes[1], -2));
                                     //lilypondContent.AppendLine($"\\time {_beatNote}/{_beatsPerBar}");
+                                    yield return $"\\time {beatNote}/{beatsPerBar} ";
                                     break;
                                 case MetaType.Tempo:
                                     byte[] tempoBytes = metaMessage.GetBytes();
                                     int tempo = (tempoBytes[0] & 0xff) << 16 | (tempoBytes[1] & 0xff) << 8 | (tempoBytes[2] & 0xff);
-                                    midi.Bmp = 60000000 / tempo;
+                                    bmp = 60000000 / tempo;
                                     //lilypondContent.AppendLine($"\\tempo 4={_bpm}");
+                                    yield return $"\\tempo 4={bmp} ";
+
                                     break;
                                 case MetaType.EndOfTrack:
                                     if (previousNoteAbsoluteTicks > 0)
                                     {
                                         // Finish the last notelength.
                                         //double percentageOfBar = 0;
-                                        var percentageOfBar = Note.CalculatePercentageBar(previousNoteAbsoluteTicks, midiEvent.AbsoluteTicks, midi.Division, midi.BeatsPerBar);
-                                        var note = Note.CalculateLength(midi.BeatNote, percentageOfBar);
-                                        midi.Notes.Add(note);
+                                        var percentageOfBar = Note.CalculatePercentageBar(previousNoteAbsoluteTicks, midiEvent.AbsoluteTicks, division, beatsPerBar);
+                                        var note = Note.CalculateLength(beatNote, percentageOfBar);
+                                        yield return note + " ";
+
                                         //lilypondContent.Append(GetNoteLength(previousNoteAbsoluteTicks, midiEvent.AbsoluteTicks, division, _beatNote, _beatsPerBar, out percentageOfBar));
                                         //lilypondContent.Append(" ");
 
-                                        midi.PercentageOfBarReached += percentageOfBar;
-                                        if (midi.PercentageOfBarReached >= 1)
+                                        percentageOfBarReached += percentageOfBar;
+                                        if (percentageOfBarReached >= 1)
                                         {
                                             //lilypondContent.AppendLine("|");
+                                            yield return "| ";
                                             percentageOfBar = percentageOfBar - 1;
                                         }
                                     }
@@ -83,6 +90,7 @@ namespace Models.Midi
                                 {
                                     // Append the new note.
                                     //lilypondContent.Append(GetNoteName(previousMidiKey, channelMessage.Data1));
+                                    yield return Note.GetNoteName(previousMidiKey, channelMessage.Data1);
 
                                     previousMidiKey = channelMessage.Data1;
                                     startedNoteIsClosed = false;
@@ -91,23 +99,26 @@ namespace Models.Midi
                                 {
                                     // Finish the previous note with the length.
                                     //double percentageOfBar;
-                                    var percentageOfBar = Note.CalculatePercentageBar(previousNoteAbsoluteTicks, midiEvent.AbsoluteTicks, midi.Division, midi.BeatsPerBar);
-                                    var note = Note.CalculateLength(midi.BeatNote, percentageOfBar);
-                                    midi.Notes.Add(note);
+                                    var percentageOfBar = Note.CalculatePercentageBar(previousNoteAbsoluteTicks, midiEvent.AbsoluteTicks, division, beatsPerBar);
+                                    var note = Note.CalculateLength(beatNote, percentageOfBar);
+                                    yield return note + " ";
+
                                     //lilypondContent.Append(GetNoteLength(previousNoteAbsoluteTicks, midiEvent.AbsoluteTicks, division, _beatNote, _beatsPerBar, out percentageOfBar));
                                     previousNoteAbsoluteTicks = midiEvent.AbsoluteTicks;
                                     //lilypondContent.Append(" ");
 
-                                    midi.PercentageOfBarReached += percentageOfBar;
-                                    if (midi.PercentageOfBarReached >= 1)
+                                    percentageOfBarReached += percentageOfBar;
+                                    if (percentageOfBarReached >= 1)
                                     {
+                                        yield return "| ";
                                         //lilypondContent.AppendLine("|");
-                                        midi.PercentageOfBarReached -= 1;
+                                        percentageOfBarReached -= 1;
                                     }
                                     startedNoteIsClosed = true;
                                 }
                                 else
                                 {
+                                    yield return "r ";
                                     //lilypondContent.Append("r");
                                 }
                             }
@@ -116,8 +127,8 @@ namespace Models.Midi
                 }
             }
 
+            yield return "}";
             //lilypondContent.Append("}");
-            return midi;
         }
     }
 }

@@ -8,6 +8,6 @@ namespace Models.Midi
 {
     public interface IFacadeMidi
     {
-        EasyMidi LoadMidi(string path);
+        IEnumerable<string> LoadMidi(string path);
     }
 }

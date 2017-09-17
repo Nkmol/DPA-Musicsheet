@@ -46,7 +46,6 @@
     <Compile Include="Domain\Chromaticism.cs" />
     <Compile Include="Domain\Note.cs" />
     <Compile Include="Domain\Pause.cs" />
-    <Compile Include="Midi\EasyMidi.cs" />
     <Compile Include="Midi\FacadeSanfordMidi.cs" />
     <Compile Include="Midi\IFacadeMidi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

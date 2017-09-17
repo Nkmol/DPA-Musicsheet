@@ -104,5 +104,66 @@ namespace Models
 
             return duration + new String('.', dots);
         }
+
+        public static string GetNoteName(int previousMidiKey, int midiKey)
+        {
+            int octave = (midiKey / 12) - 1;
+            string name = "";
+
+            switch (midiKey % 12)
+            {
+                case 0:
+                    name = "c";
+                    break;
+                case 1:
+                    name = "cis";
+                    break;
+                case 2:
+                    name = "d";
+                    break;
+                case 3:
+                    name = "dis";
+                    break;
+                case 4:
+                    name = "e";
+                    break;
+                case 5:
+                    name = "f";
+                    break;
+                case 6:
+                    name = "fis";
+                    break;
+                case 7:
+                    name = "g";
+                    break;
+                case 8:
+                    name = "gis";
+                    break;
+                case 9:
+                    name = "a";
+                    break;
+                case 10:
+                    name = "ais";
+                    break;
+                case 11:
+                    name = "b";
+                    break;
+            }
+
+            int distance = midiKey - previousMidiKey;
+            while (distance < -6)
+            {
+                name += ",";
+                distance += 8;
+            }
+
+            while (distance > 6)
+            {
+                name += "'";
+                distance -= 8;
+            }
+
+            return name;
+        }
     }
 }
