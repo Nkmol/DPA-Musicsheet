@@ -103,6 +103,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="New\Compiler\Compiler.cs" />
+    <Compile Include="New\Compiler\CompilerFactory.cs" />
+    <Compile Include="New\Compiler\Statements\CompilerNote.cs" />
+    <Compile Include="New\Compiler\Statements\ICompilerStatement.cs" />
     <Compile Include="New\FileHandlerNew.cs" />
     <Compile Include="Managers\MidiSequenceEventArgs.cs" />
     <Compile Include="Managers\WPFStaffsEventArgs.cs" />
@@ -219,6 +223,7 @@
       <Name>Models</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
