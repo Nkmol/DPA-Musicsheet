@@ -14,5 +14,17 @@ namespace DPA_Musicsheets.Models
         public LilypondToken NextToken { get; set; }
 
         public LilypondToken PreviousToken { get; set; }
+
+        public int index { get; set; }
+        public int level { get; set; }
+
+
+        public LilypondToken(LilypondTokenKind l, string v)
+        {
+            Value = v;
+            TokenKind = l;
+        }
     }
+
+    
 }

@@ -24,8 +24,8 @@ namespace DPA_Musicsheets.New
         private IEnumerable<string> TransformSequence(string path)
         {
             var facade = new FacadeSanfordMidi();
-            yield return "\\relative c' {" ;
-            yield return "\\clef treble" ;
+            yield return "\\relative c' { ";
+            yield return "\\clef treble ";
 
             foreach (var s in facade.LoadMidi(path))
             {
