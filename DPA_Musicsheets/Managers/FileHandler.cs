@@ -50,8 +50,9 @@ namespace DPA_Musicsheets.Managers
         public void LoadLilypond(string content)
         {
             LilypondText = content;
-            content = content.Trim().ToLower().Replace("\r\n", " ").Replace("\n", " ").Replace("  ", " ");
-            LinkedList<LilypondToken> tokens = GetTokensFromLilypond(content);
+            var split = content.ToLower().Split(' ').ToList(); ;
+            // TODO: Temp
+            LinkedList<LilypondToken> tokens = new FileHandlerNew().GetTokensFromLilypond(split);
 
             new Compiler(tokens).Run();
 

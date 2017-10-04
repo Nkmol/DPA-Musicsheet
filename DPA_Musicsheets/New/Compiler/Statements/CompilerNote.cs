@@ -20,6 +20,8 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         public void Compile(LilypondToken currentTokens)
         {
+            // TODO: Move into smaller statements (Dot, Amplitude, Number, Chroma, etc)
+
             // Setup mapping of possible characters at place
             // TODO: Shortcut validation => Stop when first validation is true
             // Possible at place 1

@@ -28,12 +28,11 @@ namespace DPA_Musicsheets.Managers
             {
                 result += s;
             }
-            split = result.ToLower().Split(' ').ToList();
-            GetTokensFromLilypond(split);
+            
             return result;
         }
 
-        private static LinkedList<LilypondToken> GetTokensFromLilypond(List<string> notes)
+        public LinkedList<LilypondToken> GetTokensFromLilypond(List<string> notes)
         {
             var tokens = new LinkedList<LilypondToken>();
             var tokenizer = new Tokenizer();
