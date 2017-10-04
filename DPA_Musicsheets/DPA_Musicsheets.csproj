@@ -105,8 +105,17 @@
     </ApplicationDefinition>
     <Compile Include="New\Compiler\Compiler.cs" />
     <Compile Include="New\Compiler\CompilerFactory.cs" />
+    <Compile Include="New\Compiler\Statements\CompilerChroma.cs" />
+    <Compile Include="New\Compiler\Statements\CompilerClef.cs" />
+    <Compile Include="New\Compiler\Statements\CompilerDot.cs" />
+    <Compile Include="New\Compiler\Statements\CompilerForceAmplitude.cs" />
+    <Compile Include="New\Compiler\Statements\CompilerLetter.cs" />
     <Compile Include="New\Compiler\Statements\CompilerNote.cs" />
+    <Compile Include="New\Compiler\Statements\CompilerNumber.cs" />
+    <Compile Include="New\Compiler\Statements\CompilerRelativeNote.cs" />
     <Compile Include="New\Compiler\Statements\CompilerStave.cs" />
+    <Compile Include="New\Compiler\Statements\CompilerTempo.cs" />
+    <Compile Include="New\Compiler\Statements\CompilerTime.cs" />
     <Compile Include="New\Compiler\Statements\ICompilerStatement.cs" />
     <Compile Include="New\FileHandlerNew.cs" />
     <Compile Include="Managers\MidiSequenceEventArgs.cs" />

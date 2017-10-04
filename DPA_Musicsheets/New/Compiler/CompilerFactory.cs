@@ -18,6 +18,9 @@ namespace DPA_Musicsheets.New.Compiler
         {
             AddType(LilypondTokenKind.Note.ToString(), typeof(CompilerNote));
             AddType(LilypondTokenKind.Staff.ToString(), typeof(CompilerStave));
+            AddType(LilypondTokenKind.Clef.ToString(), typeof(CompilerClef));
+            AddType(LilypondTokenKind.Time.ToString(), typeof(CompilerTime));
+            AddType(LilypondTokenKind.Tempo.ToString(), typeof(CompilerTempo));
         }
 
         public void AddType(string typenaming, Type type)

@@ -12,29 +12,37 @@ namespace DPA_Musicsheets.New.Compiler.Statements
         private const string Keyword = "\\relative";
         private const string OpenBody = "{";
         private const string CloseBody = "}";
-        public void Compile(LilypondToken currentTokens, ref LinkedList<LilypondToken> tokens)
+        public void Compile(ref LinkedList<LilypondToken> tokens)
         {
+            // \relative letter+amplitude { [clef + value] [time + value] [tempo + value] [ ... letters ] }
+
             if (tokens.First.Value.Value != Keyword)
             {
-                throw new Exception();
+                throw new Exception($"Expecting the start keyword {Keyword} for the stave");
             }
             tokens.RemoveFirst(); // compiled succesful
 
-            // Compile the letter
-            //CompilerFactory.Instance.Create(tokens.First.Value.TokenKind.ToString()).Compile(tokens.First.Value, ref tokens);
-            tokens.RemoveFirst(); // TODO
+            // Compile the relative letter
+            new CompilerRelativeNote().Compile(ref tokens);
 
+            // Compile openbody tag
             if (tokens.First.Value.Value != OpenBody)
             {
                 throw new Exception();
             }
             tokens.RemoveFirst(); // compiled succesful
 
+            // Compile body
             while (tokens.First.Value.Value != CloseBody)
             {
-                // Compile the letter
-                CompilerFactory.Instance.Create(tokens.First.Value.TokenKind.ToString())?.Compile(tokens.First.Value, ref tokens);
-                tokens.RemoveFirst(); // TODO
+                var statement = CompilerFactory.Instance.Create(tokens.First.Value.TokenKind.ToString());
+                if (statement == null)
+                {
+                    // Non supported for compiler
+                    tokens.RemoveFirst();
+                    continue;
+                }
+                statement.Compile(ref tokens);
             }
 
             if (tokens.First.Value.Value != CloseBody)
@@ -42,8 +50,6 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 throw new Exception();
             }
             tokens.RemoveFirst(); // compiled succesful
-
-            // /realitve letter { body }
         }
     }
 }

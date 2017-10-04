@@ -20,10 +20,10 @@ namespace DPA_Musicsheets.New.Compiler
 
         public void Run()
         {
-            foreach (var lilypondToken in _tokens)
+            while(_tokens.Count > 0)
             {
-                var statement = _factory.Create(lilypondToken.TokenKind.ToString());
-                statement?.Compile(lilypondToken, ref _tokens);
+                var statement = _factory.Create(_tokens.First.Value.TokenKind.ToString());
+                statement?.Compile(ref _tokens);
             }
         }
     }
