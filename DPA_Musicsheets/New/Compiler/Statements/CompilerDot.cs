@@ -11,7 +11,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
     {
         private const char Dot = '.';
 
-        public void Compile(ref LinkedList<LilypondToken> tokens)
+        public void Compile(LinkedList<LilypondToken> tokens)
         {
             var val = tokens.First.Value.ValueToCompile;
             var fChar = val[0];

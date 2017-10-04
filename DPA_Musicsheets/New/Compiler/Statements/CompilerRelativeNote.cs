@@ -9,12 +9,12 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 {
     public class CompilerRelativeNote : ICompilerStatement
     {
-        public void Compile(ref LinkedList<LilypondToken> tokens)
+        public void Compile(LinkedList<LilypondToken> tokens)
         {
             var statements = new ICompilerStatement[] {new CompilerLetter(), new CompilerForceAmplitude()};
             foreach (var compilerStatement in statements)
             {
-                compilerStatement.Compile(ref tokens);
+                compilerStatement.Compile(tokens);
             }
 
             if (tokens.First.Value.ValueToCompile != String.Empty)

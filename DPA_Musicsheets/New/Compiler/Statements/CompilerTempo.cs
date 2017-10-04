@@ -18,7 +18,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         private const string RegexPattern = "^4=[\\d]{1,2}";
 
-        public void Compile(ref LinkedList<LilypondToken> tokens)
+        public void Compile(LinkedList<LilypondToken> tokens)
         {
             if (tokens.First.Value.ValueToCompile != Keyword)
             {

@@ -11,7 +11,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
     {
         private readonly Dictionary<int, Func<ICompilerStatement[]>> _positionCharsMapping = new Dictionary<int, Func<ICompilerStatement[]>>();
 
-        public void Compile(ref LinkedList<LilypondToken> tokens)
+        public void Compile(LinkedList<LilypondToken> tokens)
         {
             // - Setup mapping of possible characters at place -
             // Possible at place 1
@@ -41,7 +41,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 {
                     try
                     {
-                        compilerStatement.Compile(ref tokens);
+                        compilerStatement.Compile(tokens);
 
                         // reset once succeeded
                         exception = null;

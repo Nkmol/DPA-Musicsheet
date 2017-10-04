@@ -12,7 +12,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
     {
         private static readonly int[] ValidNumbers = { 1, 2, 4, 8, 16 };
 
-        public void Compile(ref LinkedList<LilypondToken> tokens)
+        public void Compile(LinkedList<LilypondToken> tokens)
         {
             var val = tokens.First.Value.ValueToCompile;
             var firstNumbers = Regex.Match(val, "^[0-9]*").Value;

@@ -16,7 +16,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         private const string Keyword = "\\clef";
 
-        public void Compile(ref LinkedList<LilypondToken> tokens)
+        public void Compile(LinkedList<LilypondToken> tokens)
         {
             if (tokens.First.Value.ValueToCompile != Keyword)
             {

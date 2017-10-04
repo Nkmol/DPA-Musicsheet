@@ -54,7 +54,7 @@ namespace DPA_Musicsheets.Managers
             // TODO: Temp
             LinkedList<LilypondToken> tokens = new FileHandlerNew().GetTokensFromLilypond(split);
 
-            new Compiler(tokens).Run();
+            Compiler.Run(tokens);
 
             WPFStaffs.Clear();
             string message;

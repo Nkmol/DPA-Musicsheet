@@ -12,7 +12,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
         private static readonly string[] PrefixChroma = { "es", "is" };
 
 
-        public void Compile(ref LinkedList<LilypondToken> tokens)
+        public void Compile(LinkedList<LilypondToken> tokens)
         {
             var value = tokens.First.Value.ValueToCompile;
             var check = value.Substring(0, 2);

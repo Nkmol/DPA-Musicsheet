@@ -9,21 +9,13 @@ namespace DPA_Musicsheets.New.Compiler
 {
     public class Compiler
     {
-        private LinkedList<LilypondToken> _tokens;
-        private readonly CompilerFactory _factory;
-
-        public Compiler(LinkedList<LilypondToken> tokens)
+        public static void Run(LinkedList<LilypondToken> tokens)
         {
-            _tokens = tokens;
-            _factory = new CompilerFactory();
-        }
-
-        public void Run()
-        {
-            while(_tokens.Count > 0)
+            var factory = new CompilerFactory();
+            while (tokens.Count > 0)
             {
-                var statement = _factory.Create(_tokens.First.Value.TokenKind.ToString());
-                statement?.Compile(ref _tokens);
+                var statement = factory.Create(tokens.First.Value.TokenKind.ToString());
+                statement.Compile(tokens);
             }
         }
     }

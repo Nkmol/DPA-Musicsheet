@@ -18,7 +18,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         private const string RegexPattern = "^[0-9]/[0-9]";
 
-        public void Compile(ref LinkedList<LilypondToken> tokens)
+        public void Compile(LinkedList<LilypondToken> tokens)
         {
             if (tokens.First.Value.ValueToCompile != Keyword)
             {

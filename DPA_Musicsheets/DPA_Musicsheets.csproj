@@ -105,6 +105,7 @@
     </ApplicationDefinition>
     <Compile Include="New\Compiler\Compiler.cs" />
     <Compile Include="New\Compiler\CompilerFactory.cs" />
+    <Compile Include="New\Compiler\Statements\CompilerBar.cs" />
     <Compile Include="New\Compiler\Statements\CompilerChroma.cs" />
     <Compile Include="New\Compiler\Statements\CompilerClef.cs" />
     <Compile Include="New\Compiler\Statements\CompilerDot.cs" />
