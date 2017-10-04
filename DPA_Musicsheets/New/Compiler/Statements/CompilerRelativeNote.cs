@@ -17,7 +17,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 compilerStatement.Compile(ref tokens);
             }
 
-            if (tokens.First.Value.Value != String.Empty)
+            if (tokens.First.Value.ValueToCompile != String.Empty)
             {
                 throw new Exception($"Relative note does not support the property of {tokens.First.Value.Value}");
             }

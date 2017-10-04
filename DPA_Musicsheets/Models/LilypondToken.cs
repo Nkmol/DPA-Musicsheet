@@ -10,6 +10,8 @@ namespace DPA_Musicsheets.Models
     {
         public LilypondTokenKind TokenKind { get; set; }
         public string Value { get; set; }
+        // Value that still has to be compiled
+        public string ValueToCompile { get; set; }
 
         public LilypondToken NextToken { get; set; }
 
@@ -21,7 +23,7 @@ namespace DPA_Musicsheets.Models
 
         public LilypondToken(LilypondTokenKind l, string v)
         {
-            Value = v;
+            ValueToCompile = Value = v;
             TokenKind = l;
         }
     }

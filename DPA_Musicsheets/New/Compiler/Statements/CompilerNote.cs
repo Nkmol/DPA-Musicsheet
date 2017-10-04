@@ -27,10 +27,10 @@ namespace DPA_Musicsheets.New.Compiler.Statements
             // When a chararistic is gone, it means it has been succesfully compiled
             var i = 0;
             var firstToken = tokens.First.Value;
-            while (!string.IsNullOrEmpty(firstToken.Value))
+            while (!string.IsNullOrEmpty(firstToken.ValueToCompile))
             {
                 _positionCharsMapping.TryGetValue(i, out var validFunction);
-                if (validFunction == null || firstToken.Value.Length > _positionCharsMapping.Count)
+                if (validFunction == null || firstToken.ValueToCompile.Length > _positionCharsMapping.Count)
                 {
                     throw new Exception(
                         $"The letter contains too many specifications. A letter supports a total of {_positionCharsMapping.Count} properties"); // TODO CustomException

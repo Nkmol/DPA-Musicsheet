@@ -16,7 +16,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
         {
             // \relative letter+amplitude { [clef + value] [time + value] [tempo + value] [ ... letters ] }
 
-            if (tokens.First.Value.Value != Keyword)
+            if (tokens.First.Value.ValueToCompile != Keyword)
             {
                 throw new Exception($"Expecting the start keyword {Keyword} for the stave");
             }
@@ -26,14 +26,14 @@ namespace DPA_Musicsheets.New.Compiler.Statements
             new CompilerRelativeNote().Compile(ref tokens);
 
             // Compile openbody tag
-            if (tokens.First.Value.Value != OpenBody)
+            if (tokens.First.Value.ValueToCompile != OpenBody)
             {
                 throw new Exception();
             }
             tokens.RemoveFirst(); // compiled succesful
 
             // Compile body
-            while (tokens.First.Value.Value != CloseBody)
+            while (tokens.First.Value.ValueToCompile != CloseBody)
             {
                 var statement = CompilerFactory.Instance.Create(tokens.First.Value.TokenKind.ToString());
                 if (statement == null)
@@ -45,7 +45,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 statement.Compile(ref tokens);
             }
 
-            if (tokens.First.Value.Value != CloseBody)
+            if (tokens.First.Value.ValueToCompile != CloseBody)
             {
                 throw new Exception();
             }

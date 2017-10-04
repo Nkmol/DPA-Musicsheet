@@ -20,15 +20,15 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         public void Compile(ref LinkedList<LilypondToken> tokens)
         {
-            if (tokens.First.Value.Value != Keyword)
+            if (tokens.First.Value.ValueToCompile != Keyword)
             {
                 throw new Exception($"Expecting the start keyword {Keyword} for the Tempo");
             }
             tokens.RemoveFirst(); // Succesfully compiled
 
-            if (Regex.Match(tokens.First.Value.Value, RegexPattern).Length == 0)
+            if (Regex.Match(tokens.First.Value.ValueToCompile, RegexPattern).Length == 0)
             {
-                throw new Exception($"{tokens.First.Value.Value} is not a supported Tempo value");
+                throw new Exception($"{tokens.First.Value.ValueToCompile} is not a supported Tempo value");
             }
             tokens.RemoveFirst(); // Succesfully compiled
         }

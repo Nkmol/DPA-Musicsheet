@@ -18,15 +18,15 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         public void Compile(ref LinkedList<LilypondToken> tokens)
         {
-            if (tokens.First.Value.Value != Keyword)
+            if (tokens.First.Value.ValueToCompile != Keyword)
             {
                 throw new Exception($"Expecting the start keyword {Keyword} for the Clef");
             }
             tokens.RemoveFirst(); // Succesfully compiled
 
-            if (!ValidClefs.Contains(tokens.First.Value.Value))
+            if (!ValidClefs.Contains(tokens.First.Value.ValueToCompile))
             {
-                throw new Exception($"{tokens.First.Value.Value} is not a supported Clef value");
+                throw new Exception($"{tokens.First.Value.ValueToCompile} is not a supported Clef value");
             }
             tokens.RemoveFirst(); // Succesfully compiled
         }

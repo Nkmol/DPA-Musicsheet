@@ -14,11 +14,11 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         public void Compile(ref LinkedList<LilypondToken> tokens)
         {
-            var value = tokens.First.Value.Value;
+            var value = tokens.First.Value.ValueToCompile;
             var check = value.Substring(0, 2);
             if (value.Length >= 2 && PrefixChroma.Contains(check))
             {
-                tokens.First.Value.Value = value.Remove(0, 2);
+                tokens.First.Value.ValueToCompile = value.Remove(0, 2);
             }
             else
             {
