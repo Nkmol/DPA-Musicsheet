@@ -9,7 +9,7 @@ namespace DPA_Musicsheets.New.Compiler
 {
     public class Compiler
     {
-        private readonly LinkedList<LilypondToken> _tokens;
+        private LinkedList<LilypondToken> _tokens;
         private readonly CompilerFactory _factory;
 
         public Compiler(LinkedList<LilypondToken> tokens)
@@ -23,7 +23,7 @@ namespace DPA_Musicsheets.New.Compiler
             foreach (var lilypondToken in _tokens)
             {
                 var statement = _factory.Create(lilypondToken.TokenKind.ToString());
-                statement?.Compile(lilypondToken);
+                statement?.Compile(lilypondToken, ref _tokens);
             }
         }
     }

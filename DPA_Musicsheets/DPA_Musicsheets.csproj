@@ -106,6 +106,7 @@
     <Compile Include="New\Compiler\Compiler.cs" />
     <Compile Include="New\Compiler\CompilerFactory.cs" />
     <Compile Include="New\Compiler\Statements\CompilerNote.cs" />
+    <Compile Include="New\Compiler\Statements\CompilerStave.cs" />
     <Compile Include="New\Compiler\Statements\ICompilerStatement.cs" />
     <Compile Include="New\FileHandlerNew.cs" />
     <Compile Include="Managers\MidiSequenceEventArgs.cs" />

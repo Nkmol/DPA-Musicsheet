@@ -18,7 +18,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
         private readonly Dictionary<int, Func<string, int>> _positionCharsMapping =
             new Dictionary<int, Func<string, int>>();
 
-        public void Compile(LilypondToken currentTokens)
+        public void Compile(LilypondToken currentTokens, ref LinkedList<LilypondToken> tokens)
         {
             // TODO: Move into smaller statements (Dot, Amplitude, Number, Chroma, etc)
 
@@ -45,7 +45,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
             {
                 _positionCharsMapping.TryGetValue(i, out var validFunction);
                 if (validFunction == null)
-                    throw new Exception();
+                    throw new Exception(); // TODO CustomException
 
                 var result = validFunction(value);
                 if (result > 0)
