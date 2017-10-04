@@ -391,19 +391,16 @@ namespace DPA_Musicsheets.Managers
 
             foreach (string s in content.Split(' '))
             {
-                LilypondToken token = new LilypondToken()
-                {
-                    Value = s
-                };
+                LilypondToken token;
 
                 switch (s)
                 {
-                    case "\\relative": token.TokenKind = LilypondTokenKind.Staff; break;
-                    case "\\clef": token.TokenKind = LilypondTokenKind.Clef; break;
-                    case "\\time": token.TokenKind = LilypondTokenKind.Time; break;
-                    case "\\tempo": token.TokenKind = LilypondTokenKind.Tempo; break;
-                    case "|": token.TokenKind = LilypondTokenKind.Bar; break;
-                    default: token.TokenKind = LilypondTokenKind.Unknown; break;
+                    case "\\relative": token = new LilypondToken( LilypondTokenKind.Staff, s); break;
+                    case "\\clef": token = new LilypondToken(LilypondTokenKind.Clef, s); break;
+                    case "\\time": token = new LilypondToken(LilypondTokenKind.Time, s); break;
+                    case "\\tempo": token = new LilypondToken(LilypondTokenKind.Tempo, s); break;
+                    case "|": token = new LilypondToken(LilypondTokenKind.Bar, s); break;
+                    default: token = new LilypondToken(LilypondTokenKind.Unknown, s); break;
                 }
 
                 token.Value = s;

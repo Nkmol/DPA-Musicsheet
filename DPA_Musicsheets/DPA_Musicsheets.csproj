@@ -69,11 +69,11 @@
     </Reference>
     <Reference Include="PSAMControlLibrary, Version=2.1.0.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\PSAMControlLibrary.dll</HintPath>
+      <HintPath>..\..\DPA_Startup_Musicsheets\packages\PSAMControlLibrary.dll</HintPath>
     </Reference>
     <Reference Include="PSAMWPFControlLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\PSAMWPFControlLibrary.dll</HintPath>
+      <HintPath>..\..\DPA_Startup_Musicsheets\packages\PSAMWPFControlLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Sanford.Multimedia.Midi, Version=6.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Sanford.Multimedia.Midi.6.4.1\lib\net20\Sanford.Multimedia.Midi.dll</HintPath>
@@ -113,6 +113,7 @@
     <Compile Include="Models\LilypondTokenKind.cs" />
     <Compile Include="New\FileReaderStrategyFactory.cs" />
     <Compile Include="New\MidiReadStrategy.cs" />
+    <Compile Include="New\Tokenizer.cs" />
     <Compile Include="ViewModels\MidiPlayerViewModel.cs" />
     <Compile Include="ViewModels\StaffsViewModel.cs" />
     <Compile Include="Views\MidiPlayerCtrl.xaml.cs">
