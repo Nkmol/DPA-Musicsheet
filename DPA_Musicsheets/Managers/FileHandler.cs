@@ -12,6 +12,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DPA_Musicsheets.New.Compiler;
+using DPA_Musicsheets.New.Compiler.Nodes;
 
 namespace DPA_Musicsheets.Managers
 {
@@ -54,7 +55,7 @@ namespace DPA_Musicsheets.Managers
             // TODO: Temp
             LinkedList<LilypondToken> tokens = new FileHandlerNew().GetTokensFromLilypond(split);
 
-            Compiler.Run(tokens);
+            var nodes = Compiler.Run(tokens).ToList();
 
             WPFStaffs.Clear();
             string message;

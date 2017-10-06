@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DPA_Musicsheets.Models;
+using DPA_Musicsheets.New.Compiler.Nodes;
 
 namespace DPA_Musicsheets.New.Compiler.Statements
 {
@@ -12,7 +13,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
     {
         private static readonly int[] ValidNumbers = { 1, 2, 4, 8, 16 };
 
-        public void Compile(LinkedList<LilypondToken> tokens)
+        public INode Compile(LinkedList<LilypondToken> tokens)
         {
             var val = tokens.First.Value.ValueToCompile;
             var firstNumbers = Regex.Match(val, "^[0-9]*").Value;
@@ -24,6 +25,8 @@ namespace DPA_Musicsheets.New.Compiler.Statements
             {
                 throw new Exception($" \"{firstNumbers}\" is not a valid number");
             }
+
+            return new NodeNumber { Value = firstNumbers };
         }
     }
 }

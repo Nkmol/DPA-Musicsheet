@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DPA_Musicsheets.Models;
+using DPA_Musicsheets.New.Compiler.Nodes;
 
 namespace DPA_Musicsheets.New.Compiler.Statements
 {
@@ -11,7 +12,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
     {
         private static readonly char[] ApastrofComma = { ',', '\'' };
 
-        public void Compile(LinkedList<LilypondToken> tokens)
+        public INode Compile(LinkedList<LilypondToken> tokens)
         {
             var val = tokens.First.Value.ValueToCompile;
             var fChar = val[0];
@@ -23,6 +24,8 @@ namespace DPA_Musicsheets.New.Compiler.Statements
             {
                 throw new Exception($" \"{fChar}\" is not a valid force keyword");
             }
+
+            return new NodeAmplitude {Value = fChar.ToString()};
         }
     }
 }

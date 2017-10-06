@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DPA_Musicsheets.Models;
+using DPA_Musicsheets.New.Compiler.Nodes;
 
 namespace DPA_Musicsheets.New.Compiler.Statements
 {
@@ -18,19 +19,25 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         private const string RegexPattern = "^4=[\\d]{1,2}";
 
-        public void Compile(LinkedList<LilypondToken> tokens)
+        public INode Compile(LinkedList<LilypondToken> tokens)
         {
+            var node = new NodeTempo();
+
             if (tokens.First.Value.ValueToCompile != Keyword)
             {
                 throw new Exception($"Expecting the start keyword {Keyword} for the Tempo");
             }
             tokens.RemoveFirst(); // Succesfully compiled
 
-            if (Regex.Match(tokens.First.Value.ValueToCompile, RegexPattern).Length == 0)
+            var valueMatch = Regex.Match(tokens.First.Value.ValueToCompile, RegexPattern);
+            if (valueMatch.Length == 0)
             {
                 throw new Exception($"{tokens.First.Value.ValueToCompile} is not a supported Tempo value");
             }
             tokens.RemoveFirst(); // Succesfully compiled
+
+            node.Value = valueMatch.Value;
+            return node;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DPA_Musicsheets.Models;
+using DPA_Musicsheets.New.Compiler.Nodes;
 
 namespace DPA_Musicsheets.New.Compiler.Statements
 {
@@ -12,7 +13,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
         private static readonly string[] PrefixChroma = { "es", "is" };
 
 
-        public void Compile(LinkedList<LilypondToken> tokens)
+        public INode Compile(LinkedList<LilypondToken> tokens)
         {
             var value = tokens.First.Value.ValueToCompile;
             var check = value.Substring(0, 2);
@@ -24,6 +25,8 @@ namespace DPA_Musicsheets.New.Compiler.Statements
             {
                 throw new Exception($" \"{check}\" is not a valid chromaticis value");
             }
+
+            return new NodeChroma { Value = check };
         }
     }
 }
