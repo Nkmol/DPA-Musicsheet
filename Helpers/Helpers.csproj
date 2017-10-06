@@ -43,6 +43,7 @@
     <Compile Include="Datatypes\Factories\Factory.cs" />
     <Compile Include="Datatypes\Factories\IFactory.cs" />
     <Compile Include="Datatypes\Singleton.cs" />
+    <Compile Include="DoubleDispatch.cs" />
     <Compile Include="FileReaders\FileReader.cs" />
     <Compile Include="FileReaders\IFileReaderStrategy.cs" />
     <Compile Include="FileReaders\TextReaderStrategy.cs" />

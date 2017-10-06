@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text.RegularExpressions;
 using DPA_Musicsheets.Models;
 using DPA_Musicsheets.New.Compiler.Nodes;
 
@@ -10,24 +7,33 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 {
     public class CompilerNote : ICompilerStatement
     {
-        private readonly Dictionary<int, Func<ICompilerStatement[]>> _positionCharsMapping = new Dictionary<int, Func<ICompilerStatement[]>>();
+        // Setup mapping of possible characters at place
+        private static readonly Dictionary<int, Func<ICompilerStatement[]>> PositionCharsMapping =
+            new Dictionary<int, Func<ICompilerStatement[]>>
+            {
+                {0, () => new ICompilerStatement[] {new CompilerLetter()}},
+                {
+                    1,
+                    () => new ICompilerStatement[]
+                        {new CompilerForceAmplitude(), new CompilerNumber(), new CompilerChroma()}
+                },
+                {2, () => new ICompilerStatement[] {new CompilerNumber(), new CompilerDot()}},
+                {3, () => new ICompilerStatement[] {new CompilerDot()}}
+            };
 
-        public CompilerNote()
-        {
-            // - Setup mapping of possible characters at place -
-            // Possible at place 1
-            _positionCharsMapping.Add(0, () => new ICompilerStatement[] { new CompilerLetter() });
-            // Possible at place 2
-            _positionCharsMapping.Add(1, () => new ICompilerStatement[] { new CompilerForceAmplitude(), new CompilerNumber(), new CompilerChroma() });
-            // Possible at place 3
-            _positionCharsMapping.Add(2, () => new ICompilerStatement[] { new CompilerNumber(), new CompilerDot() });
-            // Possible at place 4
-            _positionCharsMapping.Add(3, () => new ICompilerStatement[] { new CompilerDot() });
-        }
+        private static readonly DispatchPropertyByType<NodeNote> DispatchType = new DispatchPropertyByType<NodeNote>(
+            new Dictionary<Type, Action<NodeNote, INode>>
+            {
+                {typeof(NodeLetter), (node, v) => node.NodeLetter = v},
+                {typeof(NodeNumber), (node, v) => node.NodeNumber = v},
+                {typeof(NodeAmplitude), (node, v) => node.NodeAmplitude = v},
+                {typeof(NodeChroma), (node, v) => node.NodeChroma = v},
+                {typeof(NodeDot), (node, v) => node.NodeDot = v}
+            });
 
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
-            NodeNote note = new NodeNote();
+            var note = new NodeNote();
 
             // Work the Note chararistics away
             // When a chararistic is gone, it means it has been succesfully compiled
@@ -35,22 +41,19 @@ namespace DPA_Musicsheets.New.Compiler.Statements
             var firstToken = tokens.First.Value;
             while (!string.IsNullOrEmpty(firstToken.ValueToCompile))
             {
-                _positionCharsMapping.TryGetValue(i, out var validFunction);
-                if (validFunction == null || firstToken.ValueToCompile.Length > _positionCharsMapping.Count)
-                {
+                PositionCharsMapping.TryGetValue(i, out var validFunction);
+                if (validFunction == null || firstToken.ValueToCompile.Length > PositionCharsMapping.Count)
                     throw new Exception(
-                        $"The letter contains too many specifications. A letter supports a total of {_positionCharsMapping.Count} properties"); // TODO CustomException
-                }
+                        $"The letter contains too many specifications. A letter supports a total of {PositionCharsMapping.Count} properties"); // TODO CustomException
 
                 Exception exception = null;
                 foreach (var compilerStatement in validFunction())
-                {
                     try
                     {
                         var prop = compilerStatement.Compile(tokens);
-                        AddProperty((dynamic)prop, note);
+                        DispatchType.AddProperty(note, prop);
 
-                        // reset once succeeded
+                        // discard previous errors if succeeded
                         exception = null;
                         break;
                     }
@@ -59,7 +62,6 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                         // Do not throw the error, first check other options
                         exception = e;
                     }
-                }
 
                 // If none did succeed, throw latest error
                 if (exception != null)
@@ -71,27 +73,6 @@ namespace DPA_Musicsheets.New.Compiler.Statements
             tokens.RemoveFirst(); // Succesfully compiled
 
             return note;
-        }
-
-        public void AddProperty(NodeLetter property, NodeNote note)
-        {
-            note.NodeLetter = property;
-        }
-        public void AddProperty(NodeNumber property, NodeNote note)
-        {
-            note.NodeNumber = property;
-        }
-        public void AddProperty(NodeAmplitude property, NodeNote note)
-        {
-            note.NodeAmplitude = property;
-        }
-        public void AddProperty(NodeChroma property, NodeNote note)
-        {
-            note.NodeChroma = property;
-        }
-        public void AddProperty(NodeDot property, NodeNote note)
-        {
-            note.NodeDot = property;
         }
     }
 }
