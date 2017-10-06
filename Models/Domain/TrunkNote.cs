@@ -7,9 +7,9 @@ namespace Models
 {
     public class TrunkNote : Note
     {
-        public string Letter
+        public char Letter
         {
-            get => default(string);
+            get => default(char);
             set
             {
             }
@@ -22,5 +22,7 @@ namespace Models
             {
             }
         }
+
+        public int Pitch { get; set; }
     }
 }

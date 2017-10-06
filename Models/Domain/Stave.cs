@@ -10,20 +10,24 @@ namespace Models
         /// <summary>
         /// time signature
         /// </summary>
-        public Double Time
+        public float Time
         {
-            get => default(int);
+            get => default(float);
             set
             {
             }
         }
 
-        public Note[] Notes
+        public IList<Note> Notes
         {
-            get => default(Note[]);
+            get => default(IList<Note>);
             set
             {
             }
         }
+
+        public Note RelativeNote { get; set; }
+        public string Tempo { get; set; }
+        public string Clef { get; set; }
     }
 }
