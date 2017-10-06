@@ -15,6 +15,8 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
+            var node = new NodeNumber();
+
             var val = tokens.First.Value.ValueToCompile;
             var firstNumbers = Regex.Match(val, "^[0-9]*").Value;
             if (ValidNumbers.Contains(int.Parse(firstNumbers)))
@@ -26,7 +28,8 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 throw new Exception($" \"{firstNumbers}\" is not a valid number");
             }
 
-            return new NodeNumber { Value = firstNumbers };
+            node.Value = firstNumbers;
+            return node;
         }
     }
 }

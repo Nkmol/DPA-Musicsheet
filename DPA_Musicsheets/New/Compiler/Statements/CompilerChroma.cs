@@ -15,6 +15,8 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
+            var node = new NodeChroma();
+
             var value = tokens.First.Value.ValueToCompile;
             var check = value.Substring(0, 2);
             if (value.Length >= 2 && PrefixChroma.Contains(check))
@@ -26,7 +28,8 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 throw new Exception($" \"{check}\" is not a valid chromaticis value");
             }
 
-            return new NodeChroma { Value = check };
+            node.Value = check;
+            return node;
         }
     }
 }

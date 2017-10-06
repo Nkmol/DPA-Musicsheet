@@ -15,6 +15,8 @@ namespace DPA_Musicsheets.New.Compiler.Statements
         // TODO return statement needed?
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
+            var node = (INode) null;
+
             var value = tokens.First.Value;
             if (value.PreviousToken.TokenKind != LilypondTokenKind.Note)
             {
@@ -28,7 +30,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
             tokens.RemoveFirst();
 
-            return null;
+            return node;
         }
     }
 }

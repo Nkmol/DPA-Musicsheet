@@ -14,6 +14,8 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
+            var node = new NodeLetter();
+
             var val = tokens.First.Value.ValueToCompile;
             var fChar = val[0];
             if (ValidLetters.Contains(fChar))
@@ -25,7 +27,8 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 throw new Exception($" \"{fChar}\" is not a valid letter");
             }
 
-            return new NodeLetter { Value = fChar.ToString() };
+            node.Value = fChar.ToString();
+            return node;
         }
     }
 }
