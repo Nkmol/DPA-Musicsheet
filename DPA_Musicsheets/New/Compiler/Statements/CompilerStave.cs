@@ -13,6 +13,17 @@ namespace DPA_Musicsheets.New.Compiler.Statements
         private const string Keyword = "\\relative";
         private const string OpenBody = "{";
         private const string CloseBody = "}";
+
+        private static readonly DispatchPropertyByType<NodeStave> DispatchType = new DispatchPropertyByType<NodeStave>(
+            new Dictionary<Type, Action<NodeStave, INode>>()
+            {
+                { typeof(NodeRelativeNote), (node, value) => node.RelativeNote = value },
+                { typeof(NodeClef), (node, value) => node.Clef = value },
+                { typeof(NodeTempo), (node, value) => node.Tempo = value },
+                { typeof(NodeTime), (node, value) => node.Time = value },
+                { typeof(NodeNote), (node, value) => node.Notes.Add(value) },
+            });
+
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
             // \relative letter+amplitude { [clef + value] [time + value] [tempo + value] [ ... letters ] }
@@ -26,7 +37,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
             // Compile the relative letter
             var relNote = new CompilerRelativeNote().Compile(tokens);
-            AddProperty((dynamic)relNote, node);
+            DispatchType.AddProperty(node, relNote);
 
             // Compile openbody tag
             if (tokens.First.Value.ValueToCompile != OpenBody)
@@ -48,7 +59,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 }
 
                 var prop = statement.Compile(tokens);
-                if(prop != null) AddProperty((dynamic)prop, node);
+                if(prop != null) DispatchType.AddProperty(node, prop);
             }
 
             if (tokens.First.Value.ValueToCompile != CloseBody)
@@ -59,27 +70,6 @@ namespace DPA_Musicsheets.New.Compiler.Statements
             tokens.RemoveFirst(); // compiled succesful
 
             return node;
-        }
-
-        public void AddProperty(NodeRelativeNote property, NodeStave note)
-        {
-            note.RelativeNote = property;
-        }
-        public void AddProperty(NodeClef property, NodeStave note)
-        {
-            note.Clef = property;
-        }
-        public void AddProperty(NodeTempo property, NodeStave note)
-        {
-            note.Tempo = property;
-        }
-        public void AddProperty(NodeTime property, NodeStave note)
-        {
-            note.Time = property;
-        }
-        public void AddProperty(NodeNote property, NodeStave note)
-        {
-            note.Notes.Add(property);
         }
     }
 }
