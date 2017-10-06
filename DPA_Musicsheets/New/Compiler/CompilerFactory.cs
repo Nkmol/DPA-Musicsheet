@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Datatypes;
 using DPA_Musicsheets.Models;
 using DPA_Musicsheets.New.Compiler.Statements;
