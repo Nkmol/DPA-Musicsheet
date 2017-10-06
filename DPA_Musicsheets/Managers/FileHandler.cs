@@ -11,6 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DPA_Musicsheets.New.Compiler;
+using DPA_Musicsheets.New.Compiler.Nodes;
 
 namespace DPA_Musicsheets.Managers
 {
@@ -41,6 +43,7 @@ namespace DPA_Musicsheets.Managers
 
         public void OpenFile(string fileName)
         {
+            // TODO: Temp
             var fileStringified = new FileHandlerNew().OpenFile(fileName);
             LoadLilypond(fileStringified);
         }
@@ -48,8 +51,12 @@ namespace DPA_Musicsheets.Managers
         public void LoadLilypond(string content)
         {
             LilypondText = content;
-            content = content.Trim().ToLower().Replace("\r\n", " ").Replace("\n", " ").Replace("  ", " ");
-            LinkedList<LilypondToken> tokens = GetTokensFromLilypond(content);
+            var split = content.ToLower().Split(' ').ToList(); ;
+            // TODO: Temp
+            LinkedList<LilypondToken> tokens = new FileHandlerNew().GetTokensFromLilypond(split);
+
+            var nodes = Compiler.Run(tokens).ToList();
+
             WPFStaffs.Clear();
             string message;
             WPFStaffs.AddRange(GetStaffsFromTokens(tokens, out message));
