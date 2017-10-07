@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DPA_Musicsheets.Models;
 using DPA_Musicsheets.New.Compiler.Nodes;
+using DPA_Musicsheets.New.Compiler.Nodes.Abstractions;
 
 namespace DPA_Musicsheets.New.Compiler.Statements
 {
@@ -12,7 +13,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
-            var node = new NodeLetter();
+            var node = new Node();
 
             var val = tokens.First.Value.ValueToCompile;
             var fChar = val[0];
@@ -21,6 +22,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
             else
                 throw new Exception($" \"{fChar}\" is not a valid letter");
 
+            node.Context = CompilerType.Letter;
             node.Value = fChar.ToString();
             return node;
         }

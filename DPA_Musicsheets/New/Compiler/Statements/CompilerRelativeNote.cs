@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using DPA_Musicsheets.Models;
 using DPA_Musicsheets.New.Compiler.Nodes;
+using DPA_Musicsheets.New.Compiler.Nodes.Abstractions;
 
 namespace DPA_Musicsheets.New.Compiler.Statements
 {
@@ -9,13 +10,13 @@ namespace DPA_Musicsheets.New.Compiler.Statements
     {
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
-            var node = new NodeRelativeNote();
+            var node = new NodeContainer();
 
             var statements = new ICompilerStatement[] {new CompilerLetter(), new CompilerForceAmplitude()};
             foreach (var compilerStatement in statements)
             {
                 var prop = compilerStatement.Compile(tokens);
-                AddProperty((dynamic) prop, node);
+                node.Properties.Add(prop);
             }
 
             if (tokens.First.Value.ValueToCompile != string.Empty)
@@ -23,17 +24,8 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
             tokens.RemoveFirst(); // compiled succesful
 
+            node.Context = CompilerType.RelativeNote;
             return node;
-        }
-
-        public void AddProperty(NodeLetter property, NodeRelativeNote note)
-        {
-            note.NodeLetter = property;
-        }
-
-        public void AddProperty(NodeAmplitude property, NodeRelativeNote note)
-        {
-            note.NodeAmplitude = property;
         }
     }
 }

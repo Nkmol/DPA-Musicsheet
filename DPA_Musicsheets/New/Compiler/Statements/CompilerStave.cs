@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using DPA_Musicsheets.Models;
 using DPA_Musicsheets.New.Compiler.Nodes;
+using DPA_Musicsheets.New.Compiler.Nodes.Abstractions;
 
 namespace DPA_Musicsheets.New.Compiler.Statements
 {
@@ -11,20 +12,10 @@ namespace DPA_Musicsheets.New.Compiler.Statements
         private const string OpenBody = "{";
         private const string CloseBody = "}";
 
-        private static readonly DispatchPropertyByType<NodeStave> DispatchType = new DispatchPropertyByType<NodeStave>(
-            new Dictionary<Type, Action<NodeStave, INode>>
-            {
-                {typeof(NodeRelativeNote), (node, value) => node.RelativeNote = value},
-                {typeof(NodeClef), (node, value) => node.Clef = value},
-                {typeof(NodeTempo), (node, value) => node.Tempo = value},
-                {typeof(NodeTime), (node, value) => node.Time = value},
-                {typeof(NodeNote), (node, value) => node.Notes.Add(value)}
-            });
-
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
             // \relative letter+amplitude { [clef + value] [time + value] [tempo + value] [ ... letters ] }
-            var node = new NodeStave();
+            var node = new NodeContainer();
 
             if (tokens.First.Value.ValueToCompile != Keyword)
                 throw new Exception($"Expecting the start keyword {Keyword} for the stave");
@@ -32,7 +23,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
             // Compile the relative letter
             var relNote = new CompilerRelativeNote().Compile(tokens);
-            DispatchType.AddProperty(node, relNote);
+            node.Properties.Add(relNote);
 
             // Compile openbody tag
             if (tokens.First.Value.ValueToCompile != OpenBody)
@@ -52,7 +43,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 }
 
                 var prop = statement.Compile(tokens);
-                if (prop != null) DispatchType.AddProperty(node, prop);
+                if (prop != null) node.Properties.Add(prop);
             }
 
             if (tokens.First.Value.ValueToCompile != CloseBody)
@@ -60,6 +51,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
             tokens.RemoveFirst(); // compiled succesful
 
+            node.Context = CompilerType.Stave;
             return node;
         }
     }

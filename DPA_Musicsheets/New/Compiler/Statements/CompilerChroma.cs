@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DPA_Musicsheets.Models;
 using DPA_Musicsheets.New.Compiler.Nodes;
+using DPA_Musicsheets.New.Compiler.Nodes.Abstractions;
 
 namespace DPA_Musicsheets.New.Compiler.Statements
 {
@@ -13,7 +14,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
-            var node = new NodeChroma();
+            var node = new Node();
 
             var value = tokens.First.Value.ValueToCompile;
             var check = value.Substring(0, 2);
@@ -22,6 +23,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
             else
                 throw new Exception($" \"{check}\" is not a valid chromaticis value");
 
+            node.Context = CompilerType.Chroma;
             node.Value = check;
             return node;
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DPA_Musicsheets.Models;
 using DPA_Musicsheets.New.Compiler.Nodes;
+using DPA_Musicsheets.New.Compiler.Nodes.Abstractions;
 
 namespace DPA_Musicsheets.New.Compiler.Statements
 {
@@ -18,7 +19,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
-            var node = new NodeClef();
+            var node = new Node();
 
             if (tokens.First.Value.ValueToCompile != Keyword)
                 throw new Exception($"Expecting the start keyword {Keyword} for the Clef");
@@ -29,6 +30,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 throw new Exception($"{tokens.First.Value.ValueToCompile} is not a supported Clef value");
             tokens.RemoveFirst(); // Succesfully compiled
 
+            node.Context = CompilerType.Clef;
             node.Value = value;
             return node;
         }
