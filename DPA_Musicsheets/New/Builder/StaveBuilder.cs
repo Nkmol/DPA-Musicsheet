@@ -37,7 +37,7 @@ namespace DPA_Musicsheets.New.Builder
             return this;
         }
 
-        public StaveBuilder SetTime(float value)
+        public StaveBuilder SetTime(string value)
         {
             _staveToBuild.Time = value;
             return this;

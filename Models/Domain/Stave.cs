@@ -7,24 +7,17 @@ namespace Models
 {
     public class Stave
     {
+        public Stave()
+        {
+            Notes = new List<Note>();
+        }
+
         /// <summary>
         /// time signature
         /// </summary>
-        public float Time
-        {
-            get => default(float);
-            set
-            {
-            }
-        }
+        public string Time { get; set; }
 
-        public IList<Note> Notes
-        {
-            get => default(IList<Note>);
-            set
-            {
-            }
-        }
+        public IList<Note> Notes { get; set; }
 
         public Note RelativeNote { get; set; }
         public string Tempo { get; set; }

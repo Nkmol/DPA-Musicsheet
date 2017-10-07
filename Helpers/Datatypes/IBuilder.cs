@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Helpers.Datatypes
 {
-    public interface IBuilder<T>
+    public interface IBuilder<out T>
     {
         T Build();
     }

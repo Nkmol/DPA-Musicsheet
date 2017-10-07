@@ -44,5 +44,11 @@ namespace DPA_Musicsheets.New.Builder
             _noteToBuild.Pitch = value;
             return this;
         }
+
+        public NoteBuilder SetDot()
+        {
+            _noteToBuild.hasPoint = true;
+            return this;
+        }
     }
 }

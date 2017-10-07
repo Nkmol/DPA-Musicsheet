@@ -7,21 +7,9 @@ namespace Models
 {
     public class Note
     {
-        public Double Length
-        {
-            get => default(int);
-            set
-            {
-            }
-        }
+        public Double Length { get; set; }
 
-        public bool hasPoint
-        {
-            get => default(bool);
-            set
-            {
-            }
-        }
+        public bool hasPoint { get; set; }
 
         public void Play()
         {
