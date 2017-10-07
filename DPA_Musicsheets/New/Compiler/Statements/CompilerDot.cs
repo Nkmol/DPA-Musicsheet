@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using DPA_Musicsheets.Models;
 using DPA_Musicsheets.New.Compiler.Nodes;
+using DPA_Musicsheets.New.Compiler.Nodes.Abstractions;
 
 namespace DPA_Musicsheets.New.Compiler.Statements
 {
@@ -11,7 +12,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
-            var node = new NodeDot();
+            var node = new Node();
 
             var val = tokens.First.Value.ValueToCompile;
             var fChar = val[0];
@@ -21,6 +22,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 throw new Exception(
                     $" \"{fChar}\" is not the expected Dot ('.') {tokens.First.Value.level} {tokens.First.Value.index}");
 
+            node.Context = CompilerType.Dot;
             return node;
         }
     }

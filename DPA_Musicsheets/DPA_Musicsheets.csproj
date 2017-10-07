@@ -103,20 +103,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="New\Builder\FactoryBuilder.cs" />
+    <Compile Include="New\Builder\NoteBuilder.cs" />
+    <Compile Include="New\Builder\StaveBuilder.cs" />
     <Compile Include="New\Compiler\Compiler.cs" />
     <Compile Include="New\Compiler\CompilerFactory.cs" />
-    <Compile Include="New\Compiler\Nodes\INode.cs" />
-    <Compile Include="New\Compiler\Nodes\NodeAmplitude.cs" />
-    <Compile Include="New\Compiler\Nodes\NodeChroma.cs" />
-    <Compile Include="New\Compiler\Nodes\NodeClef.cs" />
-    <Compile Include="New\Compiler\Nodes\NodeDot.cs" />
-    <Compile Include="New\Compiler\Nodes\NodeNumber.cs" />
-    <Compile Include="New\Compiler\Nodes\NodeLetter.cs" />
-    <Compile Include="New\Compiler\Nodes\NodeNote.cs" />
-    <Compile Include="New\Compiler\Nodes\NodeStave.cs" />
-    <Compile Include="New\Compiler\Nodes\NodeTempo.cs" />
-    <Compile Include="New\Compiler\Nodes\NodeTime.cs" />
-    <Compile Include="New\Compiler\Nodes\NodeRelativeNote.cs" />
+    <Compile Include="New\Compiler\CompilerType.cs" />
+    <Compile Include="New\Compiler\Nodes\Abstractions\BaseNode.cs" />
+    <Compile Include="New\Compiler\Nodes\Abstractions\INode.cs" />
+    <Compile Include="New\Compiler\Nodes\Abstractions\Node.cs" />
+    <Compile Include="New\Compiler\Nodes\Abstractions\NodeContainer.cs" />
     <Compile Include="New\Compiler\Statements\CompilerBar.cs" />
     <Compile Include="New\Compiler\Statements\CompilerChroma.cs" />
     <Compile Include="New\Compiler\Statements\CompilerClef.cs" />
@@ -129,7 +125,7 @@
     <Compile Include="New\Compiler\Statements\CompilerStave.cs" />
     <Compile Include="New\Compiler\Statements\CompilerTempo.cs" />
     <Compile Include="New\Compiler\Statements\CompilerTime.cs" />
-    <Compile Include="New\Compiler\Statements\DispatchPropertyByType.cs" />
+    <Compile Include="New\DispatchPropertyByType.cs" />
     <Compile Include="New\Compiler\Statements\ICompilerStatement.cs" />
     <Compile Include="New\FileHandlerNew.cs" />
     <Compile Include="Managers\MidiSequenceEventArgs.cs" />

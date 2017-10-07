@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using DPA_Musicsheets.Models;
 using DPA_Musicsheets.New.Compiler.Nodes;
+using DPA_Musicsheets.New.Compiler.Nodes.Abstractions;
 
 namespace DPA_Musicsheets.New.Compiler.Statements
 {
@@ -15,25 +16,15 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 {
                     1,
                     () => new ICompilerStatement[]
-                        {new CompilerForceAmplitude(), new CompilerNumber(), new CompilerChroma()}
+                        {new CompilerForceAmplitude(), new CompileLength(), new CompilerChroma()}
                 },
-                {2, () => new ICompilerStatement[] {new CompilerNumber(), new CompilerDot()}},
+                {2, () => new ICompilerStatement[] {new CompileLength(), new CompilerDot()}},
                 {3, () => new ICompilerStatement[] {new CompilerDot()}}
             };
 
-        private static readonly DispatchPropertyByType<NodeNote> DispatchType = new DispatchPropertyByType<NodeNote>(
-            new Dictionary<Type, Action<NodeNote, INode>>
-            {
-                {typeof(NodeLetter), (node, v) => node.NodeLetter = v},
-                {typeof(NodeNumber), (node, v) => node.NodeNumber = v},
-                {typeof(NodeAmplitude), (node, v) => node.NodeAmplitude = v},
-                {typeof(NodeChroma), (node, v) => node.NodeChroma = v},
-                {typeof(NodeDot), (node, v) => node.NodeDot = v}
-            });
-
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
-            var note = new NodeNote();
+            var note = new NodeContainer();
 
             // Work the Note chararistics away
             // When a chararistic is gone, it means it has been succesfully compiled
@@ -51,7 +42,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                     try
                     {
                         var prop = compilerStatement.Compile(tokens);
-                        DispatchType.AddProperty(note, prop);
+                        note.Properties.Add(prop);
 
                         // discard previous errors if succeeded
                         exception = null;
@@ -72,6 +63,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
             tokens.RemoveFirst(); // Succesfully compiled
 
+            note.Context = CompilerType.Note;
             return note;
         }
     }

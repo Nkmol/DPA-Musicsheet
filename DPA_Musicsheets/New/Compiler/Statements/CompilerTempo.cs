@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DPA_Musicsheets.Models;
 using DPA_Musicsheets.New.Compiler.Nodes;
+using DPA_Musicsheets.New.Compiler.Nodes.Abstractions;
 
 namespace DPA_Musicsheets.New.Compiler.Statements
 {
@@ -17,7 +18,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
-            var node = new NodeTempo();
+            var node = new Node();
 
             if (tokens.First.Value.ValueToCompile != Keyword)
                 throw new Exception($"Expecting the start keyword {Keyword} for the Tempo");
@@ -28,6 +29,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 throw new Exception($"{tokens.First.Value.ValueToCompile} is not a supported Tempo value");
             tokens.RemoveFirst(); // Succesfully compiled
 
+            node.Context = CompilerType.Tempo;
             node.Value = valueMatch.Value;
             return node;
         }

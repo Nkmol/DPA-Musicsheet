@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using DPA_Musicsheets.Models;
 using DPA_Musicsheets.New.Compiler.Nodes;
+using DPA_Musicsheets.New.Compiler.Nodes.Abstractions;
 
 namespace DPA_Musicsheets.New.Compiler.Statements
 {
-    public class CompilerNumber : ICompilerStatement
+    public class CompileLength : ICompilerStatement
     {
         private static readonly int[] ValidNumbers = {1, 2, 4, 8, 16};
 
         public INode Compile(LinkedList<LilypondToken> tokens)
         {
-            var node = new NodeNumber();
+            var node = new Node();
 
             var val = tokens.First.Value.ValueToCompile;
             var firstNumbers = Regex.Match(val, "^[0-9]*").Value;
@@ -22,6 +23,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
             else
                 throw new Exception($" \"{firstNumbers}\" is not a valid number");
 
+            node.Context = CompilerType.Length;
             node.Value = firstNumbers;
             return node;
         }
