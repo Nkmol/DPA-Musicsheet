@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Datatypes\Factories\Factory.cs" />
     <Compile Include="Datatypes\Factories\IFactory.cs" />
+    <Compile Include="Datatypes\IBuilder.cs" />
     <Compile Include="Datatypes\Singleton.cs" />
     <Compile Include="DoubleDispatch.cs" />
     <Compile Include="FileReaders\FileReader.cs" />
