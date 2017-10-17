@@ -12,7 +12,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
     {
         private static readonly int[] ValidNumbers = {1, 2, 4, 8, 16};
 
-        public INode Compile(LinkedList<LilypondToken> tokens)
+        public BaseNode Compile(LinkedList<LilypondToken> tokens)
         {
             var node = new Node();
 

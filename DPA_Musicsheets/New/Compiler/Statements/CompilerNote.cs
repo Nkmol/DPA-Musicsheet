@@ -22,7 +22,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 {3, () => new ICompilerStatement[] {new CompilerDot()}}
             };
 
-        public INode Compile(LinkedList<LilypondToken> tokens)
+        public BaseNode Compile(LinkedList<LilypondToken> tokens)
         {
             var note = new NodeContainer();
 

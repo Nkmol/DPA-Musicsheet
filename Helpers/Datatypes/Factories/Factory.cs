@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Datatypes;
 
-namespace Datatypes
+namespace Helpers.Datatypes.Factories
 {
     public class Factory<T> : IFactory<T>
         where T : class
@@ -17,7 +18,9 @@ namespace Datatypes
         public T Create(string type)
         {
             if (Types.TryGetValue(type, out var t))
-                return (T)Activator.CreateInstance(t);
+            {
+                return (T) Activator.CreateInstance(t);
+            }
 
             return null;
         }

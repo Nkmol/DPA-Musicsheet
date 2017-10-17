@@ -12,9 +12,9 @@ namespace DPA_Musicsheets.New.Compiler.Statements
         private static readonly string[] BarTypes = {"|"};
 
         // TODO return statement needed?
-        public INode Compile(LinkedList<LilypondToken> tokens)
+        public BaseNode Compile(LinkedList<LilypondToken> tokens)
         {
-            var node = (INode) null;
+            var node = default(BaseNode);
 
             var value = tokens.First.Value;
             if (value.PreviousToken.TokenKind != LilypondTokenKind.Note)

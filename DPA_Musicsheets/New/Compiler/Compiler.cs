@@ -7,10 +7,10 @@ namespace DPA_Musicsheets.New.Compiler
 {
     public class Compiler
     {
-        public static IEnumerable<INode> Run(LinkedList<LilypondToken> tokens)
+        public static IEnumerable<BaseNode> Run(LinkedList<LilypondToken> tokens)
         {
             var factory = new CompilerFactory();
-            var nodes = new List<INode>();
+            var nodes = new List<BaseNode>();
             while (tokens.Count > 0)
             {
                 var statement = factory.Create(tokens.First.Value.TokenKind.ToString());

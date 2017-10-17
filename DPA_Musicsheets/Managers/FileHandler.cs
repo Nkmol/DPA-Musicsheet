@@ -17,6 +17,8 @@ using DPA_Musicsheets.New.Compiler.Nodes;
 using DPA_Musicsheets.New.Compiler.Nodes.Abstractions;
 using DPA_Musicsheets.New.Compiler.Statements;
 using Helpers.Datatypes;
+using Models;
+using Note = PSAMControlLibrary.Note;
 
 namespace DPA_Musicsheets.Managers
 {
@@ -60,9 +62,9 @@ namespace DPA_Musicsheets.Managers
             LinkedList<LilypondToken> tokens = new FileHandlerNew().GetTokensFromLilypond(split);
 
             var nodes = Compiler.Run(tokens).ToList();
+            // if tokens.count > 0 == not all tokens are processed
 
-            ReadNodes(nodes);
-
+            var components = MusicSheetCreator.CreateComponents(nodes);
 
             WPFStaffs.Clear();
             string message;
@@ -73,44 +75,7 @@ namespace DPA_Musicsheets.Managers
             MidiSequenceChanged?.Invoke(this, new MidiSequenceEventArgs() { MidiSequence = MidiSequence });
         }
 
-        // TODO Improve this part, a lot of complex problems
-        private List<IBuilder<object>> builders = new List<IBuilder<object>>();
-        private List<object> BuildComponents = new List<object>();
-        private void ReadNodes(List<INode> nodes)
-        {
-
-            if (nodes == null)
-                return;
-
-            var components = new List<object>();
-
-            foreach (var node in nodes)
-            {
-                if (node is NodeContainer)
-                {
-                    var casted = node as NodeContainer;
-                    var builder = new DirectorBuilders().Create(casted.Context.ToString());
-                    builders.Add(builder);
-
-                    ReadNodes(casted.Properties); // After properties has been assigned
-
-                    var component = builder.Build();
-                    if (builders.Count > 1)
-                        DirectorBuilders.DirectComponent((dynamic) builders[builders.IndexOf(builder) - 1],
-                            (dynamic) component, casted.Context);
-                    else
-                        BuildComponents.Add(component);
-
-                    builders.RemoveAt(builders.Count - 1);
-                }
-                else
-                {
-                    var casted = (node as Node);
-                    var result = DirectorBuilders.Direct((dynamic)builders.Last(), casted);
-
-                }
-            }
-        }
+        
 
         public void LoadMidi(Sequence sequence)
         {

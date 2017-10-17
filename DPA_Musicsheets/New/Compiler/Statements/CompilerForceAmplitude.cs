@@ -11,7 +11,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
     {
         private static readonly char[] ApastrofComma = {',', '\''};
 
-        public INode Compile(LinkedList<LilypondToken> tokens)
+        public BaseNode Compile(LinkedList<LilypondToken> tokens)
         {
             var node = new Node();
 
