@@ -40,6 +40,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -49,6 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
@@ -103,7 +105,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="New\Builder\Generic\AbstractBuilder.cs" />
     <Compile Include="New\Builder\FactoryBuilder.cs" />
+    <Compile Include="New\Builder\DirectorNote.cs" />
+    <Compile Include="New\Builder\DirectorStave.cs" />
+    <Compile Include="New\Builder\FactoryDirector.cs" />
+    <Compile Include="New\Builder\Generic\DirectorNode.cs" />
+    <Compile Include="New\Builder\Generic\IDirector.cs" />
+    <Compile Include="New\Builder\MusicSheetCreator.cs" />
     <Compile Include="New\Builder\NoteBuilder.cs" />
     <Compile Include="New\Builder\StaveBuilder.cs" />
     <Compile Include="New\Compiler\Compiler.cs" />
