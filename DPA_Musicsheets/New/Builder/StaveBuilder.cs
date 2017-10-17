@@ -1,57 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Helpers.Datatypes;
-using Models;
+﻿using Models;
 
 namespace DPA_Musicsheets.New.Builder
 {
-    public class StaveBuilder : IBuilder<Stave>
+    public class StaveBuilder : AbstractBuilder<Stave>
     {
-        private Stave _staveToBuild;
-
-        public StaveBuilder()
-        {
-            _staveToBuild = new Stave();
-        }
-
-        public Stave Build()
-        {
-            var stave = _staveToBuild;
-            _staveToBuild = new Stave();
-
-            return stave;
-        }
-
         public StaveBuilder SetRelativeNote(Note value)
         {
-            _staveToBuild.RelativeNote = value;
+            ToBuild.RelativeNote = value;
             return this;
         }
 
         public StaveBuilder SetTempo(string value)
         {
-            _staveToBuild.Tempo = value;
+            ToBuild.Tempo = value;
             return this;
         }
 
         public StaveBuilder SetTime(string value)
         {
-            _staveToBuild.Time = value;
+            ToBuild.Time = value;
             return this;
         }
 
         public StaveBuilder SetClef(string value)
         {
-            _staveToBuild.Clef = value;
+            ToBuild.Clef = value;
             return this;
         }
 
         public StaveBuilder AddNote(Note value)
         {
-            _staveToBuild.Notes.Add(value);
+            ToBuild.Notes.Add(value);
             return this;
         }
     }
