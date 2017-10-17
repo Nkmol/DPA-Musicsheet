@@ -8,7 +8,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 {
     public class CompilerRelativeNote : ICompilerStatement
     {
-        public INode Compile(LinkedList<LilypondToken> tokens)
+        public BaseNode Compile(LinkedList<LilypondToken> tokens)
         {
             var node = new NodeContainer();
 

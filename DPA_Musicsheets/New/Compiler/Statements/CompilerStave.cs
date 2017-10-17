@@ -12,7 +12,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
         private const string OpenBody = "{";
         private const string CloseBody = "}";
 
-        public INode Compile(LinkedList<LilypondToken> tokens)
+        public BaseNode Compile(LinkedList<LilypondToken> tokens)
         {
             // \relative letter+amplitude { [clef + value] [time + value] [tempo + value] [ ... letters ] }
             var node = new NodeContainer();

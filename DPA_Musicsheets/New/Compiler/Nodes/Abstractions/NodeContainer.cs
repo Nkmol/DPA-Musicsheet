@@ -4,11 +4,11 @@ namespace DPA_Musicsheets.New.Compiler.Nodes.Abstractions
 {
     public class NodeContainer : BaseNode
     {
-        public List<INode> Properties;
+        public IList<BaseNode> Properties;
 
         public NodeContainer()
         {
-            Properties = new List<INode>();
+            Properties = new List<BaseNode>();
         }
     }
 }

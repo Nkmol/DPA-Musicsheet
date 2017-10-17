@@ -16,7 +16,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
         private const string RegexPattern = "^4=[\\d]{1,2}";
 
-        public INode Compile(LinkedList<LilypondToken> tokens)
+        public BaseNode Compile(LinkedList<LilypondToken> tokens)
         {
             var node = new Node();
 
