@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Models.Domain;
 
 namespace Models
 {
-    public class Note
+    public class Note : IObject
     {
         public Double Length { get; set; }
 
