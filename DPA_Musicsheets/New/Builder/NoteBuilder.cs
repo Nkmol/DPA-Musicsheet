@@ -30,7 +30,7 @@ namespace DPA_Musicsheets.New.Builder
 
         public NoteBuilder SetDot()
         {
-            ToBuild.hasPoint = true;
+            ToBuild.HasPoint = true;
             return this;
         }
     }

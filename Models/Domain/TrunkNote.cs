@@ -15,7 +15,9 @@ namespace Models
 
         public static Chromaticism TranslateChromaticism(string value)
         {
-            return value == "es" ? Chromaticism.Mol : Chromaticism.Cross;
+            return value == "es" || value == "as" ? Chromaticism.Mol : Chromaticism.Cross;
         }
+
+        public int ChromaticismAlter => ChromaticismType == Chromaticism.Mol ? -1 : 1;
     }
 }

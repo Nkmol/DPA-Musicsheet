@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Models.Domain;
 
 namespace Models
 {
@@ -10,7 +9,7 @@ namespace Models
     {
         public Double Length { get; set; }
 
-        public bool hasPoint { get; set; }
+        public bool HasPoint { get; set; }
 
         public void Play()
         {

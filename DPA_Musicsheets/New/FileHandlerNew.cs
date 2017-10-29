@@ -9,6 +9,10 @@ using Helpers;
 using Sanford.Multimedia.Midi;
 using DPA_Musicsheets.Models;
 using System.Text.RegularExpressions;
+using Models;
+using Models.Domain;
+using PSAMControlLibrary;
+using Note = PSAMControlLibrary.Note;
 
 namespace DPA_Musicsheets.Managers
 {
@@ -67,5 +71,43 @@ namespace DPA_Musicsheets.Managers
             return tokens;
         }
 
+
+        public IEnumerable<MusicalSymbol> CreateViewSymbols(Stave stave)
+        {
+            var symbols = new List<MusicalSymbol>();
+
+            // time
+            var times = stave.Time.Split('/');
+            symbols.Add(new TimeSignature(TimeSignatureType.Numbers, UInt32.Parse(times[0]), UInt32.Parse(times[1])));
+
+            // clef
+            Clef currentClef = null;
+            if (stave.Clef == "treble")
+                currentClef = new Clef(ClefType.GClef, 2);
+            else if (stave.Clef == "bass")
+                currentClef = new Clef(ClefType.FClef, 4);
+            symbols.Add(currentClef);
+
+            // Notes
+            foreach (var note in stave.Notes)
+            {
+                if (note is TrunkNote trunknote)
+                {
+                    var viewNote = new Note(trunknote.Letter.ToString().ToUpper(), trunknote.ChromaticismAlter, trunknote.Pitch,
+                        (MusicalSymbolDuration) trunknote.Length, NoteStemDirection.Up, NoteTieType.None,
+                        new List<NoteBeamType>() {NoteBeamType.Single});
+                    if (trunknote.HasPoint) viewNote.NumberOfDots += 1;
+
+                    symbols.Add(viewNote);
+                }
+                else
+                {
+                    // The only symbol that is a normal note, is a Rest
+                    symbols.Add(new Rest((MusicalSymbolDuration)note.Length));
+                }
+            }
+
+            return symbols;
+        }
     }
 }

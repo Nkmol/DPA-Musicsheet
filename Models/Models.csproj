@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Domain\Chromaticism.cs" />
     <Compile Include="Domain\IObject.cs" />
-    <Compile Include="Domain\MusicSheet.cs" />
     <Compile Include="Domain\Note.cs" />
     <Compile Include="Domain\Pause.cs" />
     <Compile Include="Midi\FacadeSanfordMidi.cs" />
