@@ -7,7 +7,8 @@ namespace Models
 {
     public enum Chromaticism
     {
-        Mol,
-        Cross
+        Mol = -1,
+        Cross = 1,
+        None = 0
     }
 }

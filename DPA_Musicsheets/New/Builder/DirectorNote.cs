@@ -16,6 +16,7 @@ namespace DPA_Musicsheets.New.Builder
                 {CompilerType.Letter, (b, node) => b.SetLetter(node.Value[0])},
                 {CompilerType.Length, (b, node) => b.SetLength(int.Parse(node.Value))},
                 {CompilerType.Chroma, (b, node) => b.SetChroma(TrunkNote.TranslateChromaticism(node.Value))},
+                {CompilerType.ForceAmplitude, (b, node) => b.SetPitch(int.Parse(node.Value))},
                 {CompilerType.Dot, (b, node) => b.SetDot()}
             };
         }

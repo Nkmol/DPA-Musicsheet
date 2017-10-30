@@ -76,10 +76,6 @@ namespace DPA_Musicsheets.Managers
         {
             var symbols = new List<MusicalSymbol>();
 
-            // time
-            var times = stave.Time.Split('/');
-            symbols.Add(new TimeSignature(TimeSignatureType.Numbers, UInt32.Parse(times[0]), UInt32.Parse(times[1])));
-
             // clef
             Clef currentClef = null;
             if (stave.Clef == "treble")
@@ -88,17 +84,23 @@ namespace DPA_Musicsheets.Managers
                 currentClef = new Clef(ClefType.FClef, 4);
             symbols.Add(currentClef);
 
+            // time
+            var times = stave.Time.Split('/');
+            symbols.Add(new TimeSignature(TimeSignatureType.Numbers, UInt32.Parse(times[0]), UInt32.Parse(times[1])));
+
             // Notes
             foreach (var note in stave.Notes)
             {
                 if (note is TrunkNote trunknote)
                 {
-                    var viewNote = new Note(trunknote.Letter.ToString().ToUpper(), trunknote.ChromaticismAlter, trunknote.Pitch,
-                        (MusicalSymbolDuration) trunknote.Length, NoteStemDirection.Up, NoteTieType.None,
-                        new List<NoteBeamType>() {NoteBeamType.Single});
+                    //Create the actual note
+                    var viewNote = new Note(trunknote.Letter.ToString().ToUpper(), 1, trunknote.Pitch,
+                        (MusicalSymbolDuration)trunknote.Length, NoteStemDirection.Up, NoteTieType.None,
+                        new List<NoteBeamType>() { NoteBeamType.Single });
                     if (trunknote.HasPoint) viewNote.NumberOfDots += 1;
 
                     symbols.Add(viewNote);
+
                 }
                 else
                 {
@@ -107,6 +109,15 @@ namespace DPA_Musicsheets.Managers
                 }
             }
 
+            //symbols.Add(new Note("D", 0, 5,
+            //    (MusicalSymbolDuration)8, NoteStemDirection.Up, NoteTieType.None,
+            //    new List<NoteBeamType>() { NoteBeamType.Single }));
+            //symbols.Add(new Note("F", 1, 5,
+            //    (MusicalSymbolDuration)8, NoteStemDirection.Up, NoteTieType.None,
+            //    new List<NoteBeamType>() { NoteBeamType.Single }));
+            //symbols.Add(new Note("G", 0, 5,
+            //    (MusicalSymbolDuration)2, NoteStemDirection.Up, NoteTieType.None,
+            //    new List<NoteBeamType>() { NoteBeamType.Single }));
             return symbols;
         }
     }

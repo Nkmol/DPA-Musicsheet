@@ -19,6 +19,8 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 node.Properties.Add(prop);
             }
 
+            Compiler.PreviousNote = tokens.First.Value.Value[0];
+
             if (tokens.First.Value.ValueToCompile != string.Empty)
                 throw new Exception($"Relative note does not support the property of {tokens.First.Value.Value}");
 

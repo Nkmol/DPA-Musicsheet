@@ -9,7 +9,7 @@ namespace Models
     {
         public char Letter { get; set; }
 
-        public Chromaticism ChromaticismType { get; set; }
+        public Chromaticism ChromaticismType { get; set; } = Chromaticism.None;
 
         public int Pitch { get; set; }
 
@@ -18,6 +18,11 @@ namespace Models
             return value == "es" || value == "as" ? Chromaticism.Mol : Chromaticism.Cross;
         }
 
-        public int ChromaticismAlter => ChromaticismType == Chromaticism.Mol ? -1 : 1;
+        private static readonly List<char> NoteOrder = new List<char> { 'c', 'd', 'e', 'f', 'g', 'a', 'b' };
+        public static int GetNoteOrderIndex(char letter)
+        {
+            letter = char.ToLowerInvariant(letter);
+            return NoteOrder.IndexOf(letter);
+        }
     }
 }

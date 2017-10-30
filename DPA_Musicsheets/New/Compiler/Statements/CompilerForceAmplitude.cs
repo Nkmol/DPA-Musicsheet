@@ -23,7 +23,13 @@ namespace DPA_Musicsheets.New.Compiler.Statements
                 throw new Exception($" \"{fChar}\" is not a valid force keyword");
 
             node.Context = CompilerType.ForceAmplitude;
-            node.Value = fChar.ToString();
+            //node.Value = fChar.ToString();
+
+            if (!char.IsWhiteSpace(fChar))
+            {
+                node.Value = fChar == ',' ? (--Compiler.Octave).ToString() : (++Compiler.Octave).ToString();
+            }
+
             return node;
         }
     }
