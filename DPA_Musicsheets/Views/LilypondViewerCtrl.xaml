@@ -27,6 +27,7 @@
             view:TextBoxExtensions.NonIntrusiveText="{Binding LilypondText,
                                                                     UpdateSourceTrigger=PropertyChanged,
                                                                     Mode=TwoWay}"
+                 Text="{Binding LilypondText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             Grid.Row="1" Grid.Column="1">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged" >

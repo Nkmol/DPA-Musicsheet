@@ -9,10 +9,10 @@ namespace DPA_Musicsheets.ViewModels.CoR
 {
     public class KeyHandlerModifierKeys : KeyHandler
     {
-        public List<Key> CurrentKeysPushed { get; }
+        public HashSet<Key> CurrentKeysPushed { get; }
         private readonly Key _key;
 
-        public KeyHandlerModifierKeys(Key key, List<Key> currentKeysPushed) : base()
+        public KeyHandlerModifierKeys(Key key, HashSet<Key> currentKeysPushed) : base()
         {
             CurrentKeysPushed = currentKeysPushed;
             _key = key;
@@ -24,7 +24,7 @@ namespace DPA_Musicsheets.ViewModels.CoR
             return CurrentKeysPushed.Contains(_key) && (Successor == null || (Successor?.HandleRequest() ?? false));
         }
 
-        public static KeyHandlerModifierKeys Creator(List<Key> currentKeysPushed, params Key[] keys)
+        public static KeyHandlerModifierKeys Creator(HashSet<Key> currentKeysPushed, params Key[] keys)
         {
             KeyHandlerModifierKeys handler = null;
             foreach (var key in keys)

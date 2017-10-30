@@ -44,7 +44,6 @@ namespace DPA_Musicsheets.ViewModels
 
                 RaisePropertyChanged(() => LilypondText);
                 LilypondTextChanged?.Invoke(this, new LilypondEventArgs {LilypondText = value});
-                //SimpleIoc.Default.GetInstance<MainViewModel>().state.Handle(SimpleIoc.Default.GetInstance<MainViewModel>());
             }
         }
 
@@ -100,7 +99,11 @@ namespace DPA_Musicsheets.ViewModels
                     {
                         _waitingForRender = false;
                         UndoCommand.RaiseCanExecuteChanged();
-                        SimpleIoc.Default.GetInstance<MainViewModel>().LilypondChange(LilypondText);
+
+                        Task.Factory.StartNew(() =>
+                        {
+                            SimpleIoc.Default.GetInstance<MainViewModel>().LilypondChange(LilypondText);
+                        });
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext()); // Request from main thread.
             }

@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -77,7 +78,7 @@ namespace DPA_Musicsheets.ViewModels
 
         #region KeyHandlers
         private Dictionary<Action, KeyHandler> KeyMapping = new Dictionary<Action, KeyHandler>();
-        private List<Key> CurrentKeysPushed = new List<Key>();
+        private HashSet<Key> CurrentKeysPushed = new HashSet<Key>();
 
         public void SetupKeyHandler()
         {
@@ -101,28 +102,32 @@ namespace DPA_Musicsheets.ViewModels
                 KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftAlt, Key.T));
         }
 
+        private async Task DelayedWork()
+        {
+            await Task.Delay(50);
+            foreach (var kv in KeyMapping)
+            {
+                if (kv.Value.HandleRequest())
+                {
+                    kv.Key();
+                    break;
+                }
+            }
+        }
+
         public ICommand OnKeyDownCommand => new RelayCommand<KeyEventArgs>(e =>
         {
-            var key = (e.Key == Key.System ? e.SystemKey : e.Key);
+            if (e.Key == Key.System) e.Handled = true;
+            var key = e.Key == Key.System ? e.SystemKey : e.Key;
             CurrentKeysPushed.Add(key);
 
-            Task.Delay(100).ContinueWith(task =>
-            {
-                foreach (var kv in KeyMapping)
-                {
-                    if (kv.Value.HandleRequest())
-                    {
-                        kv.Key();
-                        break;
-                    }
-                }
-            });
+            Task ignoredAwaitableResult = this.DelayedWork();
         });
 
         public ICommand OnKeyUpCommand => new RelayCommand<KeyEventArgs>(e =>
         {
             var key = (e.Key == Key.System ? e.SystemKey : e.Key);
-            Task.Run(() => CurrentKeysPushed.Remove(key));
+            CurrentKeysPushed.Remove(key);
         });
         #endregion KeyHandlers
 
