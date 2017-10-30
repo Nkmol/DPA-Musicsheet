@@ -148,11 +148,14 @@
     <Compile Include="New\FileReaderStrategyFactory.cs" />
     <Compile Include="New\MidiReadStrategy.cs" />
     <Compile Include="New\Tokenizer.cs" />
+    <Compile Include="ViewModels\CoR\KeyHandler.cs" />
+    <Compile Include="ViewModels\CoR\KeyHandlerModifierKeys.cs" />
     <Compile Include="ViewModels\State\ApplicationState.cs" />
     <Compile Include="ViewModels\MidiPlayerViewModel.cs" />
     <Compile Include="ViewModels\StaffsViewModel.cs" />
     <Compile Include="ViewModels\State\StateSaved.cs" />
     <Compile Include="ViewModels\State\StateUnsavedChanges.cs" />
+    <Compile Include="Views\GetNonIntrusiveText.cs" />
     <Compile Include="Views\MidiPlayerCtrl.xaml.cs">
       <DependentUpon>MidiPlayerCtrl.xaml</DependentUpon>
     </Compile>
@@ -165,6 +168,7 @@
     <Compile Include="ViewModels\LilypondViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
+    <Compile Include="Views\TextBoxCursorPositionBehavior.cs" />
     <Page Include="Views\MidiPlayerCtrl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

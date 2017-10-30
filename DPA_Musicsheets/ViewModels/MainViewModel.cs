@@ -13,17 +13,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using DPA_Musicsheets.ViewModels.CoR;
 using DPA_Musicsheets.ViewModels.State;
 using GalaSoft.MvvmLight.Ioc;
 using Models;
 using Models.Domain;
 using PSAMControlLibrary;
+using Key = System.Windows.Input.Key;
 using Note = PSAMControlLibrary.Note;
 
 namespace DPA_Musicsheets.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private LilypondViewModel _lilypondVM { get; }
         private ApplicationState _state;
 
         public ApplicationState State
@@ -60,14 +63,68 @@ namespace DPA_Musicsheets.ViewModels
 
         private FileHandler _fileHandler;
 
-        public MainViewModel(FileHandler fileHandler)
+        public MainViewModel(FileHandler fileHandler, LilypondViewModel lilypondVM)
         {
+            _lilypondVM = lilypondVM;
+            SetupKeyHandler();
+            // Inital state
             State = new StateSaved();
             _fileHandler = fileHandler;
             FileName = @"Files/Alle-eendjes-zwemmen-in-het-water.mid";
 
             MessengerInstance.Register<CurrentStateMessage>(this, (message) => CurrentState = message.State);
         }
+
+        #region KeyHandlers
+        private Dictionary<Action, KeyHandler> KeyMapping = new Dictionary<Action, KeyHandler>();
+        private List<Key> CurrentKeysPushed = new List<Key>();
+
+        public void SetupKeyHandler()
+        {
+            KeyMapping.Add(() => _fileHandler.SaveToLilypond(FileName, _lilypondVM.LilypondText), 
+                KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftCtrl, Key.S));
+            KeyMapping.Add(() => _fileHandler.SaveToPDF(FileName, _lilypondVM.LilypondText),
+                KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftCtrl, Key.S, Key.P));
+            KeyMapping.Add(() => OpenFileCommand.Execute(null),
+                KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftCtrl, Key.O));
+            KeyMapping.Add(() => _lilypondVM.InsertAtCursor("\\clef treble"),
+                KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftAlt, Key.C));
+            KeyMapping.Add(() => _lilypondVM.InsertAtCursor("\\tempo 4=120"),
+                KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftAlt, Key.S));
+            KeyMapping.Add(() => _lilypondVM.InsertAtCursor("\\time 6/8"),
+                KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftAlt, Key.T, Key.D6));
+            KeyMapping.Add(() => _lilypondVM.InsertAtCursor("\\time 3/4"),
+                KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftAlt, Key.T, Key.D3));
+            KeyMapping.Add(() => _lilypondVM.InsertAtCursor("\\time 4/4"),
+                KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftAlt, Key.T, Key.D4));
+            KeyMapping.Add(() => _lilypondVM.InsertAtCursor("\\time 4/4"),
+                KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftAlt, Key.T));
+        }
+
+        public ICommand OnKeyDownCommand => new RelayCommand<KeyEventArgs>(e =>
+        {
+            var key = (e.Key == Key.System ? e.SystemKey : e.Key);
+            CurrentKeysPushed.Add(key);
+
+            Task.Delay(100).ContinueWith(task =>
+            {
+                foreach (var kv in KeyMapping)
+                {
+                    if (kv.Value.HandleRequest())
+                    {
+                        kv.Key();
+                        break;
+                    }
+                }
+            });
+        });
+
+        public ICommand OnKeyUpCommand => new RelayCommand<KeyEventArgs>(e =>
+        {
+            var key = (e.Key == Key.System ? e.SystemKey : e.Key);
+            Task.Run(() => CurrentKeysPushed.Remove(key));
+        });
+        #endregion KeyHandlers
 
         public ICommand OpenFileCommand => new RelayCommand(() =>
         {
@@ -79,7 +136,6 @@ namespace DPA_Musicsheets.ViewModels
         });
         public ICommand LoadCommand => new RelayCommand(() =>
         {
-            //_fileHandler.OpenFile(FileName);
             var lilypond = _fileHandler.LoadFile(FileName);
             LilypondChange(lilypond);
         });
@@ -115,16 +171,6 @@ namespace DPA_Musicsheets.ViewModels
         public ICommand OnLostFocusCommand => new RelayCommand(() =>
         {
             Console.WriteLine("Maingrid Lost focus");
-        });
-
-        public ICommand OnKeyDownCommand => new RelayCommand<KeyEventArgs>((e) =>
-        {
-            Console.WriteLine($"Key down: {e.Key}");
-        });
-
-        public ICommand OnKeyUpCommand => new RelayCommand(() =>
-        {
-            Console.WriteLine("Key Up");
         });
 
         public ICommand OnWindowClosingCommand => new RelayCommand<CancelEventArgs>(e =>

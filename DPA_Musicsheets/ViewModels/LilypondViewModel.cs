@@ -1,24 +1,33 @@
-﻿using DPA_Musicsheets.Managers;
-using DPA_Musicsheets.Messages;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using DPA_Musicsheets.ViewModels.State;
+using DPA_Musicsheets.Managers;
+using DPA_Musicsheets.Messages;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
+using Microsoft.Win32;
 using Models.Domain;
 
 namespace DPA_Musicsheets.ViewModels
 {
     public class LilypondViewModel : ViewModelBase
     {
-        private FileHandler _fileHandler;
+        private readonly FileHandler _fileHandler;
+
+        public int CaretIndex
+        {
+            get { return _caretIndex; }
+            set
+            {
+                _caretIndex = value;
+                RaisePropertyChanged(() => CaretIndex);
+            }
+        }
 
         private string _text;
         private string _previousText;
@@ -30,26 +39,28 @@ namespace DPA_Musicsheets.ViewModels
             set
             {
                 if (!_waitingForRender && !_textChangedByLoad)
-                {
                     _previousText = _text;
-                }
                 _text = value;
-                RaisePropertyChanged(() => LilypondText);
-                LilypondTextChanged?.Invoke(this, new LilypondEventArgs() { LilypondText = value });
 
+                RaisePropertyChanged(() => LilypondText);
+                LilypondTextChanged?.Invoke(this, new LilypondEventArgs {LilypondText = value});
                 //SimpleIoc.Default.GetInstance<MainViewModel>().state.Handle(SimpleIoc.Default.GetInstance<MainViewModel>());
             }
         }
 
-        public bool TextChanged(string e) => e != _previousText;
+        public bool TextChanged(string e)
+        {
+            return e != _previousText;
+        }
 
         public event EventHandler<LilypondEventArgs> LilypondTextChanged;
         public event EventHandler<SequenceSavedArgs> LilypondSaved;
 
-        private bool _textChangedByLoad = false;
+        private readonly bool _textChangedByLoad = false;
         private DateTime _lastChange;
-        private static int MILLISECONDS_BEFORE_CHANGE_HANDLED = 1500;
-        private bool _waitingForRender = false;
+        private static readonly int MILLISECONDS_BEFORE_CHANGE_HANDLED = 1500;
+        private bool _waitingForRender;
+        private int _caretIndex;
 
         public LilypondViewModel(FileHandler fileHandler)
         {
@@ -64,14 +75,24 @@ namespace DPA_Musicsheets.ViewModels
 
             _text = "Your lilypond text will appear here.";
         }
-        
-        public ICommand TextChangedCommand => new RelayCommand<TextChangedEventArgs>((args) =>
+
+        public void InsertAtCursor(string insert)
+        {
+            InsertAtPosition(insert, CaretIndex);
+        }
+
+        public void InsertAtPosition(string insert, int index)
+        {
+            LilypondText = _text.Insert(index, insert);
+        }
+
+        public ICommand TextChangedCommand => new RelayCommand<TextChangedEventArgs>(args =>
         {
             if (!_textChangedByLoad)
             {
                 _waitingForRender = true;
                 _lastChange = DateTime.Now;
-                MessengerInstance.Send<CurrentStateMessage>(new CurrentStateMessage() { State = "Rendering..." });
+                MessengerInstance.Send(new CurrentStateMessage {State = "Rendering..."});
 
                 Task.Delay(MILLISECONDS_BEFORE_CHANGE_HANDLED).ContinueWith(task =>
                 {
@@ -102,11 +123,11 @@ namespace DPA_Musicsheets.ViewModels
 
         public ICommand SaveAsCommand => new RelayCommand(() =>
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog() { Filter = "Midi|*.mid|Lilypond|*.ly|PDF|*.pdf" };
+            var saveFileDialog = new SaveFileDialog {Filter = "Midi|*.mid|Lilypond|*.ly|PDF|*.pdf"};
             var result = true;
             if (saveFileDialog.ShowDialog() == true)
             {
-                string extension = Path.GetExtension(saveFileDialog.FileName);
+                var extension = Path.GetExtension(saveFileDialog.FileName);
                 if (extension.EndsWith(".mid"))
                 {
                     var objs = _fileHandler.ProcessLillyPond(_text);
@@ -134,7 +155,7 @@ namespace DPA_Musicsheets.ViewModels
                 result = false;
             }
 
-            LilypondSaved?.Invoke(this, new SequenceSavedArgs() { Result = result });
+            LilypondSaved?.Invoke(this, new SequenceSavedArgs {Result = result});
         });
     }
 }
