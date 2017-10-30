@@ -65,12 +65,18 @@ namespace DPA_Musicsheets.ViewModels
         {
             //_fileHandler.OpenFile(FileName);
             var lilypond = _fileHandler.LoadFile(FileName);
-            SimpleIoc.Default.GetInstance<LilypondViewModel>().LilypondText = lilypond;
+            LilypondChange(lilypond);
+        });
 
-            var processedModels = _fileHandler.ProcessLillyPond(lilypond);
+        public void LilypondChange(string newText)
+        {
+            SimpleIoc.Default.GetInstance<LilypondViewModel>().LilypondText = newText;
+
+            var processedModels = _fileHandler.ProcessLillyPond(newText);
 
             // Generate staff view
-            var symbols = CreateViewSymbols((Stave) processedModels[0]).ToList();
+            var symbols = CreateViewSymbols((Stave)processedModels[0]).ToList();
+            SimpleIoc.Default.GetInstance<StaffsViewModel>().Staffs.Clear();
             foreach (var symbol in symbols)
             {
                 SimpleIoc.Default.GetInstance<StaffsViewModel>().Staffs.Add(symbol);
@@ -79,7 +85,7 @@ namespace DPA_Musicsheets.ViewModels
             // Init sequence
             var sequence = _fileHandler.GetSequenceFromWPFStaffs(symbols.ToList());
             SimpleIoc.Default.GetInstance<MidiPlayerViewModel>().Sequencer.Sequence = sequence;
-        });
+        }
         
         public ICommand OnLostFocusCommand => new RelayCommand(() =>
         {

@@ -5,10 +5,13 @@ using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Win32;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using GalaSoft.MvvmLight.Ioc;
+using Models.Domain;
 
 namespace DPA_Musicsheets.ViewModels
 {
@@ -71,8 +74,7 @@ namespace DPA_Musicsheets.ViewModels
                     {
                         _waitingForRender = false;
                         UndoCommand.RaiseCanExecuteChanged();
-
-                        _fileHandler.ProcessLillyPond(LilypondText);
+                        SimpleIoc.Default.GetInstance<MainViewModel>().LilypondChange(LilypondText);
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext()); // Request from main thread.
             }
@@ -95,28 +97,30 @@ namespace DPA_Musicsheets.ViewModels
 
         public ICommand SaveAsCommand => new RelayCommand(() =>
         {
-            //SaveFileDialog saveFileDialog = new SaveFileDialog() { Filter = "Midi|*.mid|Lilypond|*.ly|PDF|*.pdf" };
-            //if (saveFileDialog.ShowDialog() == true)
-            //{
-            //    string extension = Path.GetExtension(saveFileDialog.FileName);
-            //    if (extension.EndsWith(".mid"))
-            //    {
-            //        var symbols = _fileHandler.ProcessLillyPond(_text);
-            //        _fileHandler.SaveToMidi(saveFileDialog.FileName, symbols);
-            //    }
-            //    else if (extension.EndsWith(".ly"))
-            //    {
-            //        _fileHandler.SaveToLilypond(saveFileDialog.FileName);
-            //    }
-            //    else if (extension.EndsWith(".pdf"))
-            //    {
-            //        _fileHandler.SaveToPDF(saveFileDialog.FileName);
-            //    }
-            //    else
-            //    {
-            //        MessageBox.Show($"Extension {extension} is not supported.");
-            //    }
-            //}
+            SaveFileDialog saveFileDialog = new SaveFileDialog() { Filter = "Midi|*.mid|Lilypond|*.ly|PDF|*.pdf" };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                string extension = Path.GetExtension(saveFileDialog.FileName);
+                if (extension.EndsWith(".mid"))
+                {
+                    var objs = _fileHandler.ProcessLillyPond(_text);
+                    var symbols = SimpleIoc.Default.GetInstance<MainViewModel>().CreateViewSymbols((Stave)objs[0]).ToList();
+
+                    _fileHandler.SaveToMidi(saveFileDialog.FileName, symbols);
+                }
+                else if (extension.EndsWith(".ly"))
+                {
+                    _fileHandler.SaveToLilypond(saveFileDialog.FileName);
+                }
+                else if (extension.EndsWith(".pdf"))
+                {
+                    _fileHandler.SaveToPDF(saveFileDialog.FileName);
+                }
+                else
+                {
+                    MessageBox.Show($"Extension {extension} is not supported.");
+                }
+            }
         });
     }
 }
