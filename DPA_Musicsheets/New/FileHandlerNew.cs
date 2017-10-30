@@ -94,7 +94,7 @@ namespace DPA_Musicsheets.Managers
                 if (note is TrunkNote trunknote)
                 {
                     //Create the actual note
-                    var viewNote = new Note(trunknote.Letter.ToString().ToUpper(), 1, trunknote.Pitch,
+                    var viewNote = new Note(trunknote.Letter.ToString().ToUpper(), (int)trunknote.ChromaticismType, trunknote.Pitch,
                         (MusicalSymbolDuration)trunknote.Length, NoteStemDirection.Up, NoteTieType.None,
                         new List<NoteBeamType>() { NoteBeamType.Single });
                     if (trunknote.HasPoint) viewNote.NumberOfDots += 1;
@@ -104,8 +104,18 @@ namespace DPA_Musicsheets.Managers
                 }
                 else
                 {
-                    // The only symbol that is a normal note, is a Rest
-                    symbols.Add(new Rest((MusicalSymbolDuration)note.Length));
+                    // Sepcial notes
+                    switch (note.Special)
+                    {
+                        case SpecialType.Bar:
+                            symbols.Add(new Barline());
+                            break;
+                        case SpecialType.Rest:
+                            symbols.Add(new Rest((MusicalSymbolDuration)note.Length));
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 

@@ -1,20 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Models
+namespace Models.Domain
 {
+    public enum SpecialType
+    {
+        Rest,
+        Bar,
+        None = 0
+    }
+
     public class Note : IObject
     {
+        public SpecialType Special { get; set; }
+
         public Double Length { get; set; }
 
         public bool HasPoint { get; set; }
-
-        public void Play()
-        {
-            throw new System.NotImplementedException();
-        }
 
         public static double CalculatePercentageBar(int previousCurrentTicks, int currentTicks, int division, int beatsPerBar)
         {

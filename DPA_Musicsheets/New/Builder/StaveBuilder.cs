@@ -34,5 +34,11 @@ namespace DPA_Musicsheets.New.Builder
             ToBuild.Notes.Add(value);
             return this;
         }
+
+        public StaveBuilder AddBar()
+        {
+            ToBuild.Notes.Add(new Note() {Special =  SpecialType.Bar });
+            return this;
+        }
     }
 }

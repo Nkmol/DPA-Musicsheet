@@ -11,10 +11,9 @@ namespace DPA_Musicsheets.New.Compiler.Statements
     {
         private static readonly string[] BarTypes = {"|"};
 
-        // TODO return statement needed?
         public BaseNode Compile(LinkedList<LilypondToken> tokens)
         {
-            var node = default(BaseNode);
+            var node = new Node();
 
             var value = tokens.First.Value;
             if (value.PreviousToken.TokenKind != LilypondTokenKind.Note)
@@ -25,6 +24,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 
             tokens.RemoveFirst();
 
+            node.Context = CompilerType.Bar;
             return node;
         }
     }

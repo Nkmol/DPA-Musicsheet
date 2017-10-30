@@ -18,6 +18,7 @@ namespace DPA_Musicsheets.New.Compiler
         RelativeNote,
         Note,
         Stave,
-        Clef
+        Clef,
+        Bar
     }
 }

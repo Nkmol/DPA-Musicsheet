@@ -4,6 +4,7 @@ using DPA_Musicsheets.New.Builder.Generic;
 using DPA_Musicsheets.New.Compiler;
 using DPA_Musicsheets.New.Compiler.Nodes.Abstractions;
 using Models;
+using Models.Domain;
 
 namespace DPA_Musicsheets.New.Builder
 {
@@ -15,7 +16,8 @@ namespace DPA_Musicsheets.New.Builder
             {
                 {CompilerType.Clef, (b, node) => b.SetClef(node.Value)},
                 {CompilerType.Time, (b, node) => b.SetTime(node.Value)},
-                {CompilerType.Tempo, (b, node) => b.SetTempo(node.Value)}
+                {CompilerType.Tempo, (b, node) => b.SetTempo(node.Value)},
+                {CompilerType.Bar, (b, node) => b.AddBar()},
             };
 
             ComponentDirectorMap = new Dictionary<CompilerType, Action<StaveBuilder, IObject>>
