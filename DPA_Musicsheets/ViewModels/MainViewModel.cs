@@ -88,21 +88,28 @@ namespace DPA_Musicsheets.ViewModels
         {
             SimpleIoc.Default.GetInstance<LilypondViewModel>().LilypondText = newText;
 
-            var processedModels = _fileHandler.ProcessLillyPond(newText);
-
-            // Generate staff view
-            var symbols = CreateViewSymbols((Stave)processedModels[0]).ToList();
-            SimpleIoc.Default.GetInstance<StaffsViewModel>().Staffs.Clear();
-            foreach (var symbol in symbols)
+            try
             {
-                SimpleIoc.Default.GetInstance<StaffsViewModel>().Staffs.Add(symbol);
-            }
+                var processedModels = _fileHandler.ProcessLillyPond(newText);
 
-            // Init sequence
-            var sequence = _fileHandler.GetSequenceFromWPFStaffs(symbols.ToList());
-            SimpleIoc.Default.GetInstance<MidiPlayerViewModel>().Sequencer.Sequence = sequence;
+                // Generate staff view
+                var symbols = CreateViewSymbols((Stave) processedModels[0]).ToList();
+                SimpleIoc.Default.GetInstance<StaffsViewModel>().Staffs.Clear();
+                foreach (var symbol in symbols)
+                {
+                    SimpleIoc.Default.GetInstance<StaffsViewModel>().Staffs.Add(symbol);
+                }
+
+                // Init sequence
+                var sequence = _fileHandler.GetSequenceFromWPFStaffs(symbols.ToList());
+                SimpleIoc.Default.GetInstance<MidiPlayerViewModel>().Sequencer.Sequence = sequence;
+            }
+            catch (Exception e)
+            {
+                CurrentState = e.Message;
+            }
         }
-        
+
         public ICommand OnLostFocusCommand => new RelayCommand(() =>
         {
             Console.WriteLine("Maingrid Lost focus");

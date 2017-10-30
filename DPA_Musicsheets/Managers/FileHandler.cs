@@ -27,17 +27,7 @@ namespace DPA_Musicsheets.Managers
 {
     public class FileHandler
     {
-        
-        //public List<MusicalSymbol> WPFStaffs { get; set; } = new List<MusicalSymbol>();
-
         public Sequence MidiSequence { get; set; }
-
-        //public event EventHandler<WPFStaffsEventArgs> WPFStaffsChanged;
-        //public event EventHandler<MidiSequenceEventArgs> MidiSequenceChanged;
-
-        private int _beatNote = 4;    // De waarde van een beatnote.
-        private int _bpm = 120;       // Aantal beatnotes per minute.
-        private int _beatsPerBar;     // Aantal beatnotes per maat.
 
         /// <summary>
         /// 
@@ -49,7 +39,6 @@ namespace DPA_Musicsheets.Managers
         {
             var strategy = FileReaderStrategyFactory.Instance.Create(Path.GetExtension(path));
             FileReader fr = new FileReader(path, strategy);
-
 
             var result = "";
             foreach (var s in fr.ReadLine())
@@ -69,15 +58,6 @@ namespace DPA_Musicsheets.Managers
             // if tokens.count > 0 == not all tokens are processed
 
             return MusicSheetCreator.CreateComponents(nodes);
-
-            //WPFStaffs.Clear();
-            //string message = "";
-            ////WPFStaffs.AddRange(GetStaffsFromTokens(tokens, out message));
-            //WPFStaffs.AddRange(new FileHandlerNew().CreateViewSymbols(components[0] as Stave));
-            //WPFStaffsChanged?.Invoke(this, new WPFStaffsEventArgs() { Symbols = WPFStaffs, Message = message });
-
-            //MidiSequence = GetSequenceFromWPFStaffs();
-            //MidiSequenceChanged?.Invoke(this, new MidiSequenceEventArgs() { MidiSequence = MidiSequence });
         }
 
         public LinkedList<LilypondToken> GetTokensFromLilypond(List<string> notes)
@@ -123,6 +103,10 @@ namespace DPA_Musicsheets.Managers
             sequence.Save(fileName);
         }
 
+
+        private int _beatNote = 4;    // De waarde van een beatnote.
+        private int _bpm = 120;       // Aantal beatnotes per minute.
+        private int _beatsPerBar;     // Aantal beatnotes per maat.
         public Sequence GetSequenceFromWPFStaffs(List<MusicalSymbol> symbols)
         {
             List<string> notesOrderWithCrosses = new List<string>() { "c", "cis", "d", "dis", "e", "f", "fis", "g", "gis", "a", "ais", "b" };
