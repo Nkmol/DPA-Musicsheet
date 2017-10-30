@@ -11,11 +11,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DPA_Musicsheets.New;
 using DPA_Musicsheets.New.Builder;
 using DPA_Musicsheets.New.Compiler;
 using DPA_Musicsheets.New.Compiler.Nodes;
 using DPA_Musicsheets.New.Compiler.Nodes.Abstractions;
 using DPA_Musicsheets.New.Compiler.Statements;
+using Helpers;
 using Helpers.Datatypes;
 using Models;
 using Models.Domain;
@@ -25,185 +27,81 @@ namespace DPA_Musicsheets.Managers
 {
     public class FileHandler
     {
-        private string _lilypondText;
-        public string LilypondText
-        {
-            get { return _lilypondText; }
-            set
-            {
-                _lilypondText = value;
-                LilypondTextChanged?.Invoke(this, new LilypondEventArgs() { LilypondText = value });
-            }
-        }
-        public List<MusicalSymbol> WPFStaffs { get; set; } = new List<MusicalSymbol>();
-        private static List<Char> notesorder = new List<Char> { 'c', 'd', 'e', 'f', 'g', 'a', 'b' };
+        
+        //public List<MusicalSymbol> WPFStaffs { get; set; } = new List<MusicalSymbol>();
 
         public Sequence MidiSequence { get; set; }
 
-        public event EventHandler<LilypondEventArgs> LilypondTextChanged;
-        public event EventHandler<WPFStaffsEventArgs> WPFStaffsChanged;
-        public event EventHandler<MidiSequenceEventArgs> MidiSequenceChanged;
+        //public event EventHandler<WPFStaffsEventArgs> WPFStaffsChanged;
+        //public event EventHandler<MidiSequenceEventArgs> MidiSequenceChanged;
 
         private int _beatNote = 4;    // De waarde van een beatnote.
         private int _bpm = 120;       // Aantal beatnotes per minute.
         private int _beatsPerBar;     // Aantal beatnotes per maat.
 
-        public void OpenFile(string fileName)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>Lilypond stingified music file</returns>
+        // TODO: Make sure "yield" sequence is preserved at build stage (so beyond this). At the moment we simply append them all to one result
+        public string LoadFile(string path)
         {
-            // TODO: Temp
-            var fileStringified = new FileHandlerNew().OpenFile(fileName);
-            LoadLilypond(fileStringified);
+            var strategy = FileReaderStrategyFactory.Instance.Create(Path.GetExtension(path));
+            FileReader fr = new FileReader(path, strategy);
+
+
+            var result = "";
+            foreach (var s in fr.ReadLine())
+            {
+                result += s;
+            }
+
+            return result;
         }
 
-        public void LoadLilypond(string content)
+        public List<IObject> ProcessLillyPond(string content)
         {
-            LilypondText = content;
             var split = content.ToLower().Split(' ').ToList(); ;
-            // TODO: Temp
-            LinkedList<LilypondToken> tokens = new FileHandlerNew().GetTokensFromLilypond(split);
+            LinkedList<LilypondToken> tokens = GetTokensFromLilypond(split);
 
             var nodes = Compiler.Run(tokens).ToList();
             // if tokens.count > 0 == not all tokens are processed
 
-            var components = MusicSheetCreator.CreateComponents(nodes);
+            return MusicSheetCreator.CreateComponents(nodes);
 
-            WPFStaffs.Clear();
-            string message = "";
-            //WPFStaffs.AddRange(GetStaffsFromTokens(tokens, out message));
-            WPFStaffs.AddRange(new FileHandlerNew().CreateViewSymbols(components[0] as Stave));
-            WPFStaffsChanged?.Invoke(this, new WPFStaffsEventArgs() { Symbols = WPFStaffs, Message = message });
+            //WPFStaffs.Clear();
+            //string message = "";
+            ////WPFStaffs.AddRange(GetStaffsFromTokens(tokens, out message));
+            //WPFStaffs.AddRange(new FileHandlerNew().CreateViewSymbols(components[0] as Stave));
+            //WPFStaffsChanged?.Invoke(this, new WPFStaffsEventArgs() { Symbols = WPFStaffs, Message = message });
 
-            MidiSequence = GetSequenceFromWPFStaffs();
-            MidiSequenceChanged?.Invoke(this, new MidiSequenceEventArgs() { MidiSequence = MidiSequence });
+            //MidiSequence = GetSequenceFromWPFStaffs();
+            //MidiSequenceChanged?.Invoke(this, new MidiSequenceEventArgs() { MidiSequence = MidiSequence });
         }
 
-
-
-        #region Staffs loading
-        private static IEnumerable<MusicalSymbol> GetStaffsFromTokens(LinkedList<LilypondToken> tokens, out string message)
-        {
-            List<MusicalSymbol> symbols = new List<MusicalSymbol>();
-            message = "";
-
-            try
-            {
-                Clef currentClef = null;
-                int previousOctave = 4;
-                char previousNote = 'c';
-
-                LilypondToken currentToken = tokens.First();
-                while (currentToken != null)
-                {
-                    switch (currentToken.TokenKind)
-                    {
-                        case LilypondTokenKind.Unknown:
-                            break;
-                        case LilypondTokenKind.Note:
-                            // Length
-                            int noteLength = Int32.Parse(Regex.Match(currentToken.Value, @"\d+").Value);
-                            // Crosses and Moles
-                            int alter = 0;
-                            alter += Regex.Matches(currentToken.Value, "is").Count;
-                            alter -= Regex.Matches(currentToken.Value, "es|as").Count;
-                            // Octaves
-                            int distanceWithPreviousNote = notesorder.IndexOf(currentToken.Value[0]) - notesorder.IndexOf(previousNote);
-                            if (distanceWithPreviousNote > 3) // Shorter path possible the other way around
-                            {
-                                distanceWithPreviousNote -= 7; // The number of notes in an octave
-                            }
-                            else if (distanceWithPreviousNote < -3)
-                            {
-                                distanceWithPreviousNote += 7; // The number of notes in an octave
-                            }
-
-                            if (distanceWithPreviousNote + notesorder.IndexOf(previousNote) >= 7)
-                            {
-                                previousOctave++;
-                            }
-                            else if (distanceWithPreviousNote + notesorder.IndexOf(previousNote) < 0)
-                            {
-                                previousOctave--;
-                            }
-
-                            // Force up or down.
-                            previousOctave += currentToken.Value.Count(c => c == '\'');
-                            previousOctave -= currentToken.Value.Count(c => c == ',');
-
-                            previousNote = currentToken.Value[0];
-
-                            var note = new Note(currentToken.Value[0].ToString().ToUpper(), alter, previousOctave, (MusicalSymbolDuration)noteLength, NoteStemDirection.Up, NoteTieType.None, new List<NoteBeamType>() { NoteBeamType.Single });
-                            note.NumberOfDots += currentToken.Value.Count(c => c.Equals('.'));
-
-                            symbols.Add(note);
-                            break;
-                        case LilypondTokenKind.Rest:
-                            var restLength = Int32.Parse(currentToken.Value[1].ToString());
-                            symbols.Add(new Rest((MusicalSymbolDuration)restLength));
-                            break;
-                        case LilypondTokenKind.Bar:
-                            symbols.Add(new Barline());
-                            break;
-                        case LilypondTokenKind.Clef:
-                            currentToken = currentToken.NextToken;
-                            if (currentToken.Value == "treble")
-                                currentClef = new Clef(ClefType.GClef, 2);
-                            else if (currentToken.Value == "bass")
-                                currentClef = new Clef(ClefType.FClef, 4);
-                            else
-                                throw new NotSupportedException($"Clef {currentToken.Value} is not supported.");
-
-                            symbols.Add(currentClef);
-                            break;
-                        case LilypondTokenKind.Time:
-                            currentToken = currentToken.NextToken;
-                            var times = currentToken.Value.Split('/');
-                            symbols.Add(new TimeSignature(TimeSignatureType.Numbers, UInt32.Parse(times[0]), UInt32.Parse(times[1])));
-                            break;
-                        case LilypondTokenKind.Tempo:
-                            // Tempo not supported
-                            break;
-                        default:
-                            break;
-                    }
-                    currentToken = currentToken.NextToken;
-                }
-            }
-            catch(Exception ex)
-            {
-                message = ex.Message;
-            }
-
-            return symbols;
-        }
-        
-        private static LinkedList<LilypondToken> GetTokensFromLilypond(string content)
+        public LinkedList<LilypondToken> GetTokensFromLilypond(List<string> notes)
         {
             var tokens = new LinkedList<LilypondToken>();
+            var tokenizer = new Tokenizer();
+            int level = 0;
 
-            foreach (string s in content.Split(' '))
+            foreach (string s in notes)
             {
-                LilypondToken token;
+                LilypondToken token = tokenizer.Tokenize(s);
+                token.index = tokens.Count();
 
-                switch (s)
+                if (token.Value == "{")
                 {
-                    case "\\relative": token = new LilypondToken( LilypondTokenKind.Staff, s); break;
-                    case "\\clef": token = new LilypondToken(LilypondTokenKind.Clef, s); break;
-                    case "\\time": token = new LilypondToken(LilypondTokenKind.Time, s); break;
-                    case "\\tempo": token = new LilypondToken(LilypondTokenKind.Tempo, s); break;
-                    case "|": token = new LilypondToken(LilypondTokenKind.Bar, s); break;
-                    default: token = new LilypondToken(LilypondTokenKind.Unknown, s); break;
+                    level++;
                 }
 
-                token.Value = s;
+                if (token.Value == "}")
+                {
+                    level--;
+                }
 
-                if (token.TokenKind == LilypondTokenKind.Unknown && new Regex(@"[a-g][,'eis]*[0-9]+[.]*").IsMatch(s))
-                {
-                    token.TokenKind = LilypondTokenKind.Note;
-                }
-                else if (token.TokenKind == LilypondTokenKind.Unknown && new Regex(@"r.*?[0-9][.]*").IsMatch(s))
-                {
-                    token.TokenKind = LilypondTokenKind.Rest;
-                }
+                token.level = level;
 
                 if (tokens.Last != null)
                 {
@@ -216,17 +114,16 @@ namespace DPA_Musicsheets.Managers
 
             return tokens;
         }
-        #endregion Staffs loading
 
         #region Saving to files
-        internal void SaveToMidi(string fileName)
+        internal void SaveToMidi(string fileName, List<MusicalSymbol> symbols)
         {
-            Sequence sequence = GetSequenceFromWPFStaffs();
+            Sequence sequence = GetSequenceFromWPFStaffs(symbols);
 
             sequence.Save(fileName);
         }
 
-        private Sequence GetSequenceFromWPFStaffs()
+        public Sequence GetSequenceFromWPFStaffs(List<MusicalSymbol> symbols)
         {
             List<string> notesOrderWithCrosses = new List<string>() { "c", "cis", "d", "dis", "e", "f", "fis", "g", "gis", "a", "ais", "b" };
             int absoluteTicks = 0;
@@ -247,7 +144,7 @@ namespace DPA_Musicsheets.Managers
             Track notesTrack = new Track();
             sequence.Add(notesTrack);
 
-            foreach (MusicalSymbol musicalSymbol in WPFStaffs)
+            foreach (MusicalSymbol musicalSymbol in symbols)
             {
                 switch (musicalSymbol.Type)
                 {
@@ -324,7 +221,7 @@ namespace DPA_Musicsheets.Managers
         {
             using (StreamWriter outputFile = new StreamWriter(fileName))
             {
-                outputFile.Write(LilypondText);
+                outputFile.Write("");
                 outputFile.Close();
             }
         }

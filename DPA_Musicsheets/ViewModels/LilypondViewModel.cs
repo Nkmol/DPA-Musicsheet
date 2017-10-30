@@ -22,10 +22,7 @@ namespace DPA_Musicsheets.ViewModels
 
         public string LilypondText
         {
-            get
-            {
-                return _text;
-            }
+            get => _text;
             set
             {
                 if (!_waitingForRender && !_textChangedByLoad)
@@ -34,8 +31,12 @@ namespace DPA_Musicsheets.ViewModels
                 }
                 _text = value;
                 RaisePropertyChanged(() => LilypondText);
+                //LilypondTextChanged?.Invoke(this, new LilypondEventArgs() { LilypondText = value });
+
             }
         }
+
+        //public event EventHandler<LilypondEventArgs> LilypondTextChanged;
 
         private bool _textChangedByLoad = false;
         private DateTime _lastChange;
@@ -46,12 +47,12 @@ namespace DPA_Musicsheets.ViewModels
         {
             _fileHandler = fileHandler;
 
-            _fileHandler.LilypondTextChanged += (src, e) =>
-            {
-                _textChangedByLoad = true;
-                LilypondText = _previousText = e.LilypondText;
-                _textChangedByLoad = false;
-            };
+            //LilypondTextChanged += (src, e) =>
+            //{
+            //    _textChangedByLoad = true;
+            //    LilypondText = _previousText = e.LilypondText;
+            //    _textChangedByLoad = false;
+            //};
 
             _text = "Your lilypond text will appear here.";
         }
@@ -71,7 +72,7 @@ namespace DPA_Musicsheets.ViewModels
                         _waitingForRender = false;
                         UndoCommand.RaiseCanExecuteChanged();
 
-                        _fileHandler.LoadLilypond(LilypondText);
+                        _fileHandler.ProcessLillyPond(LilypondText);
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext()); // Request from main thread.
             }
@@ -94,27 +95,28 @@ namespace DPA_Musicsheets.ViewModels
 
         public ICommand SaveAsCommand => new RelayCommand(() =>
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog() { Filter = "Midi|*.mid|Lilypond|*.ly|PDF|*.pdf" };
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                string extension = Path.GetExtension(saveFileDialog.FileName);
-                if (extension.EndsWith(".mid"))
-                {
-                    _fileHandler.SaveToMidi(saveFileDialog.FileName);
-                }
-                else if (extension.EndsWith(".ly"))
-                {
-                    _fileHandler.SaveToLilypond(saveFileDialog.FileName);
-                }
-                else if (extension.EndsWith(".pdf"))
-                {
-                    _fileHandler.SaveToPDF(saveFileDialog.FileName);
-                }
-                else
-                {
-                    MessageBox.Show($"Extension {extension} is not supported.");
-                }
-            }
+            //SaveFileDialog saveFileDialog = new SaveFileDialog() { Filter = "Midi|*.mid|Lilypond|*.ly|PDF|*.pdf" };
+            //if (saveFileDialog.ShowDialog() == true)
+            //{
+            //    string extension = Path.GetExtension(saveFileDialog.FileName);
+            //    if (extension.EndsWith(".mid"))
+            //    {
+            //        var symbols = _fileHandler.ProcessLillyPond(_text);
+            //        _fileHandler.SaveToMidi(saveFileDialog.FileName, symbols);
+            //    }
+            //    else if (extension.EndsWith(".ly"))
+            //    {
+            //        _fileHandler.SaveToLilypond(saveFileDialog.FileName);
+            //    }
+            //    else if (extension.EndsWith(".pdf"))
+            //    {
+            //        _fileHandler.SaveToPDF(saveFileDialog.FileName);
+            //    }
+            //    else
+            //    {
+            //        MessageBox.Show($"Extension {extension} is not supported.");
+            //    }
+            //}
         });
     }
 }

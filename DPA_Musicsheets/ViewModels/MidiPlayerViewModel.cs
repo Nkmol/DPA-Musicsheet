@@ -11,12 +11,22 @@ namespace DPA_Musicsheets.ViewModels
         private FileHandler _fileHandler;
 
         private OutputDevice _outputDevice;
-
+        private Sequencer _sequencer;
         // De sequencer maakt het mogelijk om een sequence af te spelen.
         // Deze heeft een timer en geeft events op de juiste momenten.
-        private Sequencer _sequencer;
+        public Sequencer Sequencer
+        {
+            get { return _sequencer; }
+            set
+            {
+                StopCommand.Execute(null);
+                Set(ref _sequencer, value);
+                UpdateButtons();
+            }
+        }
 
         private bool _running;
+        
 
         public MidiPlayerViewModel(FileHandler fileHandler)
         {
@@ -24,28 +34,28 @@ namespace DPA_Musicsheets.ViewModels
             // Hierop gaan we audio streamen.
             // DeviceID 0 is je audio van je PC zelf.
             _outputDevice = new OutputDevice(0);
-            _sequencer = new Sequencer();
+            Sequencer = new Sequencer();
 
             // Wanneer een channelmessage langskomt sturen we deze direct door naar onze audio.
             // Channelmessages zijn tonen met commands als NoteOn en NoteOff
             // In midi wordt elke noot gespeeld totdat NoteOff is benoemd. Wanneer dus nooit een NoteOff komt nadat die een NoteOn heeft gehad
             // zal deze note dus oneindig lang blijven spelen.
-            _sequencer.ChannelMessagePlayed += ChannelMessagePlayed;
+            Sequencer.ChannelMessagePlayed += ChannelMessagePlayed;
 
             // Wanneer de sequence klaar is moeten we alles closen en stoppen.
-            _sequencer.PlayingCompleted += (playingSender, playingEvent) =>
+            Sequencer.PlayingCompleted += (playingSender, playingEvent) =>
             {
-                _sequencer.Stop();
+                Sequencer.Stop();
                 _running = false;
             };
 
             _fileHandler = fileHandler;
-            _fileHandler.MidiSequenceChanged += (src, args) =>
-            {
-                StopCommand.Execute(null);
-                _sequencer.Sequence = args.MidiSequence;
-                UpdateButtons();
-            };
+            //_fileHandler.MidiSequenceChanged += (src, args) =>
+            //{
+            //    StopCommand.Execute(null);
+            //    Sequencer.Sequence = args.MidiSequence;
+            //    UpdateButtons();
+            //};
         }
 
         private void UpdateButtons()
@@ -75,23 +85,23 @@ namespace DPA_Musicsheets.ViewModels
             if (!_running)
             {
                 _running = true;
-                _sequencer.Continue();
+                Sequencer.Continue();
                 UpdateButtons();
             }
-        }, () => !_running && _sequencer.Sequence != null);
+        }, () => !_running && Sequencer.Sequence != null);
 
         public RelayCommand StopCommand => new RelayCommand(() =>
         {
             _running = false;
-            _sequencer.Stop();
-            _sequencer.Position = 0;
+            Sequencer.Stop();
+            Sequencer.Position = 0;
             UpdateButtons();
         }, () => _running);
 
         public RelayCommand PauseCommand => new RelayCommand(() =>
         {
             _running = false;
-            _sequencer.Stop();
+            Sequencer.Stop();
             UpdateButtons();
         }, () => _running);
 
@@ -99,8 +109,8 @@ namespace DPA_Musicsheets.ViewModels
         {
             base.Cleanup();
 
-            _sequencer.Stop();
-            _sequencer.Dispose();
+            Sequencer.Stop();
+            Sequencer.Dispose();
             _outputDevice.Dispose();
         }
     }
