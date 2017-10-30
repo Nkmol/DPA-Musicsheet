@@ -7,11 +7,13 @@ using PSAMWPFControlLibrary;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using DPA_Musicsheets.ViewModels.State;
 using GalaSoft.MvvmLight.Ioc;
 using Models;
 using Models.Domain;
@@ -22,6 +24,19 @@ namespace DPA_Musicsheets.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private ApplicationState _state;
+
+        public ApplicationState State
+        {
+            get => _state;
+            set
+            {
+                value.Handle(this);
+                _state = value;
+            }
+        }
+
+
         private string _fileName;
         public string FileName
         {
@@ -47,6 +62,7 @@ namespace DPA_Musicsheets.ViewModels
 
         public MainViewModel(FileHandler fileHandler)
         {
+            State = new StateSaved();
             _fileHandler = fileHandler;
             FileName = @"Files/Alle-eendjes-zwemmen-in-het-water.mid";
 
@@ -102,9 +118,26 @@ namespace DPA_Musicsheets.ViewModels
             Console.WriteLine("Key Up");
         });
 
-        public ICommand OnWindowClosingCommand => new RelayCommand(() =>
+        public ICommand OnWindowClosingCommand => new RelayCommand<CancelEventArgs>(e =>
         {
-            ViewModelLocator.Cleanup();
+            if (State is StateUnsavedChanges)
+            {
+                MessageBoxResult result = MessageBox.Show("You have unsaved changes. Are you sure you want to quit?",
+                    "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    ViewModelLocator.Cleanup();
+                    Environment.Exit(0);
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+                Environment.Exit(0);
+            }
         });
 
         // Create the PSAM controller view
@@ -154,16 +187,6 @@ namespace DPA_Musicsheets.ViewModels
                     }
                 }
             }
-
-            //symbols.Add(new Note("D", 0, 5,
-            //    (MusicalSymbolDuration)8, NoteStemDirection.Up, NoteTieType.None,
-            //    new List<NoteBeamType>() { NoteBeamType.Single }));
-            //symbols.Add(new Note("F", 1, 5,
-            //    (MusicalSymbolDuration)8, NoteStemDirection.Up, NoteTieType.None,
-            //    new List<NoteBeamType>() { NoteBeamType.Single }));
-            //symbols.Add(new Note("G", 0, 5,
-            //    (MusicalSymbolDuration)2, NoteStemDirection.Up, NoteTieType.None,
-            //    new List<NoteBeamType>() { NoteBeamType.Single }));
             return symbols;
         }
     }

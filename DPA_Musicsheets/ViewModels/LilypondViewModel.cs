@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using DPA_Musicsheets.ViewModels.State;
 using GalaSoft.MvvmLight.Ioc;
 using Models.Domain;
 
@@ -34,12 +35,16 @@ namespace DPA_Musicsheets.ViewModels
                 }
                 _text = value;
                 RaisePropertyChanged(() => LilypondText);
-                //LilypondTextChanged?.Invoke(this, new LilypondEventArgs() { LilypondText = value });
+                LilypondTextChanged?.Invoke(this, new LilypondEventArgs() { LilypondText = value });
 
+                //SimpleIoc.Default.GetInstance<MainViewModel>().state.Handle(SimpleIoc.Default.GetInstance<MainViewModel>());
             }
         }
 
-        //public event EventHandler<LilypondEventArgs> LilypondTextChanged;
+        public bool TextChanged(string e) => e != _previousText;
+
+        public event EventHandler<LilypondEventArgs> LilypondTextChanged;
+        public event EventHandler<SequenceSavedArgs> LilypondSaved;
 
         private bool _textChangedByLoad = false;
         private DateTime _lastChange;
@@ -98,29 +103,38 @@ namespace DPA_Musicsheets.ViewModels
         public ICommand SaveAsCommand => new RelayCommand(() =>
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog() { Filter = "Midi|*.mid|Lilypond|*.ly|PDF|*.pdf" };
+            var result = true;
             if (saveFileDialog.ShowDialog() == true)
             {
                 string extension = Path.GetExtension(saveFileDialog.FileName);
                 if (extension.EndsWith(".mid"))
                 {
                     var objs = _fileHandler.ProcessLillyPond(_text);
-                    var symbols = SimpleIoc.Default.GetInstance<MainViewModel>().CreateViewSymbols((Stave)objs[0]).ToList();
+                    var symbols = SimpleIoc.Default.GetInstance<MainViewModel>().CreateViewSymbols((Stave) objs[0])
+                        .ToList();
 
                     _fileHandler.SaveToMidi(saveFileDialog.FileName, symbols);
                 }
                 else if (extension.EndsWith(".ly"))
                 {
-                    _fileHandler.SaveToLilypond(saveFileDialog.FileName);
+                    _fileHandler.SaveToLilypond(saveFileDialog.FileName, _text);
                 }
                 else if (extension.EndsWith(".pdf"))
                 {
-                    _fileHandler.SaveToPDF(saveFileDialog.FileName);
+                    _fileHandler.SaveToPDF(saveFileDialog.FileName, _text);
                 }
                 else
                 {
                     MessageBox.Show($"Extension {extension} is not supported.");
+                    result = false;
                 }
             }
+            else
+            {
+                result = false;
+            }
+
+            LilypondSaved?.Invoke(this, new SequenceSavedArgs() { Result = result });
         });
     }
 }

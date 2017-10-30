@@ -20,7 +20,14 @@ namespace DPA_Musicsheets.New.Compiler
             while (tokens.Count > 0)
             {
                 var statement = factory.Create(tokens.First.Value.TokenKind.ToString());
+
+                // Statement not yet defined
+                if (statement == null)
+                {
+                    break;
+                }
                 var node = statement.Compile(tokens);
+                
 
                 nodes.Add(node);
             }

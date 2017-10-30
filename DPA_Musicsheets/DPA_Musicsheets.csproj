@@ -105,6 +105,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Managers\SequenceSavedArgs.cs" />
     <Compile Include="New\Builder\Generic\AbstractBuilder.cs" />
     <Compile Include="New\Builder\FactoryBuilder.cs" />
     <Compile Include="New\Builder\DirectorNote.cs" />
@@ -147,8 +148,11 @@
     <Compile Include="New\FileReaderStrategyFactory.cs" />
     <Compile Include="New\MidiReadStrategy.cs" />
     <Compile Include="New\Tokenizer.cs" />
+    <Compile Include="ViewModels\State\ApplicationState.cs" />
     <Compile Include="ViewModels\MidiPlayerViewModel.cs" />
     <Compile Include="ViewModels\StaffsViewModel.cs" />
+    <Compile Include="ViewModels\State\StateSaved.cs" />
+    <Compile Include="ViewModels\State\StateUnsavedChanges.cs" />
     <Compile Include="Views\MidiPlayerCtrl.xaml.cs">
       <DependentUpon>MidiPlayerCtrl.xaml</DependentUpon>
     </Compile>

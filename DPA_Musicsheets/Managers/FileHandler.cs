@@ -184,11 +184,11 @@ namespace DPA_Musicsheets.Managers
             return sequence;
         }
 
-        internal void SaveToPDF(string fileName)
+        internal void SaveToPDF(string fileName, string lilypond)
         {
             string withoutExtension = Path.GetFileNameWithoutExtension(fileName);
             string tmpFileName = $"{fileName}-tmp.ly";
-            SaveToLilypond(tmpFileName);
+            SaveToLilypond(tmpFileName, lilypond);
 
             string lilypondLocation = @"C:\Program Files (x86)\LilyPond\usr\bin\lilypond.exe";
             string sourceFolder = Path.GetDirectoryName(tmpFileName);
@@ -217,11 +217,11 @@ namespace DPA_Musicsheets.Managers
             }
         }
 
-        internal void SaveToLilypond(string fileName)
+        internal void SaveToLilypond(string fileName, string lilypond)
         {
             using (StreamWriter outputFile = new StreamWriter(fileName))
             {
-                outputFile.Write("");
+                outputFile.Write(lilypond);
                 outputFile.Close();
             }
         }
