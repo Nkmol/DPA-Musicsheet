@@ -103,6 +103,8 @@ namespace DPA_Musicsheets.ViewModels
                 // Init sequence
                 var sequence = _fileHandler.GetSequenceFromWPFStaffs(symbols.ToList());
                 SimpleIoc.Default.GetInstance<MidiPlayerViewModel>().Sequencer.Sequence = sequence;
+
+                CurrentState = "Rendering completed";
             }
             catch (Exception e)
             {

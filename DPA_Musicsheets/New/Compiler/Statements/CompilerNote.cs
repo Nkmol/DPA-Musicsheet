@@ -35,9 +35,9 @@ namespace DPA_Musicsheets.New.Compiler.Statements
             while (!string.IsNullOrEmpty(firstToken.ValueToCompile))
             {
                 PositionCharsMapping.TryGetValue(i, out var validFunction);
-                if (validFunction == null || firstToken.ValueToCompile.Length > PositionCharsMapping.Count)
+                if (validFunction == null || firstToken.ValueToCompile.Length > PositionCharsMapping.Count+1)
                     throw new Exception(
-                        $"The letter contains too many specifications. A letter supports a total of {PositionCharsMapping.Count} properties"); 
+                        $"The letter contains too many specifications. A letter supports a total of {PositionCharsMapping.Count+1} properties"); 
 
                 Exception exception = null;
                 foreach (var compilerStatement in validFunction())

@@ -10,7 +10,7 @@ namespace DPA_Musicsheets.New.Compiler.Statements
 {
     public class CompileLength : ICompilerStatement
     {
-        private static readonly int[] ValidNumbers = {1, 2, 4, 8, 16};
+        private static readonly int[] ValidNumbers = {1, 2, 4, 8, 16, 32};
 
         public BaseNode Compile(LinkedList<LilypondToken> tokens)
         {
