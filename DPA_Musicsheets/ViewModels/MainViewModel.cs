@@ -77,28 +77,37 @@ namespace DPA_Musicsheets.ViewModels
         }
 
         #region KeyHandlers
-        private Dictionary<Action, KeyHandler> KeyMapping = new Dictionary<Action, KeyHandler>();
+
+        private Dictionary<Command, KeyHandler> KeyMapping = new Dictionary<Command, KeyHandler>();
         private HashSet<Key> CurrentKeysPushed = new HashSet<Key>();
 
         public void SetupKeyHandler()
         {
-            KeyMapping.Add(() => _fileHandler.SaveToLilypond(FileName, _lilypondVM.LilypondText), 
+            KeyMapping.Add(new Command(() => _fileHandler.SaveToLilypond(FileName, _lilypondVM.LilypondText)), 
                 KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftCtrl, Key.S));
-            KeyMapping.Add(() => _fileHandler.SaveToPDF(FileName, _lilypondVM.LilypondText),
+
+            KeyMapping.Add(new Command(() => _fileHandler.SaveToPDF(FileName, _lilypondVM.LilypondText)),
                 KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftCtrl, Key.S, Key.P));
-            KeyMapping.Add(() => OpenFileCommand.Execute(null),
+
+            KeyMapping.Add(new Command(() => OpenFileCommand.Execute(null)),
                 KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftCtrl, Key.O));
-            KeyMapping.Add(() => _lilypondVM.InsertAtCursor("\\clef treble"),
+
+            KeyMapping.Add(new Command(() => _lilypondVM.InsertAtCursor("\\clef treble")),
                 KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftAlt, Key.C));
-            KeyMapping.Add(() => _lilypondVM.InsertAtCursor("\\tempo 4=120"),
+
+            KeyMapping.Add(new Command(() => _lilypondVM.InsertAtCursor("\\tempo 4=120")),
                 KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftAlt, Key.S));
-            KeyMapping.Add(() => _lilypondVM.InsertAtCursor("\\time 6/8"),
+
+            KeyMapping.Add(new Command(() => _lilypondVM.InsertAtCursor("\\time 6/8")),
                 KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftAlt, Key.T, Key.D6));
-            KeyMapping.Add(() => _lilypondVM.InsertAtCursor("\\time 3/4"),
+
+            KeyMapping.Add(new Command(() => _lilypondVM.InsertAtCursor("\\time 3/4")),
                 KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftAlt, Key.T, Key.D3));
-            KeyMapping.Add(() => _lilypondVM.InsertAtCursor("\\time 4/4"),
+
+            KeyMapping.Add(new Command(() => _lilypondVM.InsertAtCursor("\\time 4/4")),
                 KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftAlt, Key.T, Key.D4));
-            KeyMapping.Add(() => _lilypondVM.InsertAtCursor("\\time 4/4"),
+
+            KeyMapping.Add(new Command(() => _lilypondVM.InsertAtCursor("\\time 4/4")),
                 KeyHandlerModifierKeys.Creator(CurrentKeysPushed, Key.LeftAlt, Key.T));
         }
 
@@ -109,7 +118,7 @@ namespace DPA_Musicsheets.ViewModels
             {
                 if (kv.Value.HandleRequest())
                 {
-                    kv.Key();
+                    kv.Key.Execute();
                     break;
                 }
             }

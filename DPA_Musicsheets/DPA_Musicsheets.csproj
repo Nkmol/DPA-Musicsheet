@@ -137,7 +137,6 @@
     <Compile Include="New\Compiler\Statements\CompilerTime.cs" />
     <Compile Include="New\DispatchPropertyByType.cs" />
     <Compile Include="New\Compiler\Statements\ICompilerStatement.cs" />
-    <Compile Include="New\FileHandlerNew.cs" />
     <Compile Include="Managers\MidiSequenceEventArgs.cs" />
     <Compile Include="Managers\WPFStaffsEventArgs.cs" />
     <Compile Include="Managers\LilypondEventArgs.cs" />
