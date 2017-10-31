@@ -147,6 +147,7 @@
     <Compile Include="New\FileReaderStrategyFactory.cs" />
     <Compile Include="New\MidiReadStrategy.cs" />
     <Compile Include="New\Tokenizer.cs" />
+    <Compile Include="ViewModels\CoR\Command.cs" />
     <Compile Include="ViewModels\CoR\KeyHandler.cs" />
     <Compile Include="ViewModels\CoR\KeyHandlerModifierKeys.cs" />
     <Compile Include="ViewModels\State\ApplicationState.cs" />
